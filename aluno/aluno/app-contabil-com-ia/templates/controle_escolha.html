@@ -1,0 +1,6 @@
+{% macro escolha(nome, titulo, valor, opcoes) -%}
+<div class="cmp-choice" data-choice-group data-choice-kind="binary" role="radiogroup" aria-label="{{ titulo }}">
+  <input type="hidden" name="{{ nome }}" value="{{ valor }}">
+  {% for codigo, texto, icone in opcoes %}<button type="button" role="radio" data-value="{{ codigo }}" aria-checked="{{ 'true' if valor == codigo else 'false' }}" tabindex="{{ 0 if valor == codigo else -1 }}"><i class="ph {{ icone }}"></i>{{ texto }}</button>{% endfor %}
+</div>
+{%- endmacro %}

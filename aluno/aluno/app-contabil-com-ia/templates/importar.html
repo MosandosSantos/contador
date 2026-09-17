@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% from 'arvore_macros.html' import rotulo %}
+{% block content %}
+{% if not stats.linhas and not payload %}
+<div class="first-import"><i class="ph ph-upload-simple"></i><p><strong>Comece pela sua planilha.</strong> Importe os lançamentos para alimentar os demonstrativos.</p></div>
+{% else %}<p class="intro">Da planilha aos demonstrativos. Confira o período e organize as contas antes de analisar.</p>{% endif %}
+<nav class="workflow" aria-label="Etapas da importação"><span class="is-active" aria-current="step">1 · Importar e conferir</span><a href="/contas">2 · Classificar contas</a>{% if modulo_disponivel('grupos-dre') %}<a href="/grupos-dre">3 · Organizar DRE</a>{% endif %}{% if modulo_disponivel('balanco') %}<a href="/balanco">4 · Demonstrativos</a>{% endif %}</nav>
+{% if stats.linhas %}
+<section class="kpi-grid">
+  <article class="kpi"><small>Base atual</small><strong>{{ stats.linhas }}</strong><span>Lançamentos registrados</span></article>
+  <article class="kpi"><small>Primeiro lançamento</small><strong class="date-value">{{ stats.inicio|data_br }}</strong><span>Inclui saldos de abertura</span></article>
+  <article class="kpi"><small>Último lançamento</small><strong class="date-value">{{ stats.fim|data_br }}</strong><span>Corte disponível nos relatórios</span></article>
+  <article class="kpi"><small>Classificação pendente</small><strong>{{ pendentes }}</strong><a href="/contas?pendentes=1">Conferir plano de contas</a></article>
+</section>
+{% endif %}
+{% if not payload %}
+<section class="card">
+  <header class="card-header"><h2>Importar lançamentos</h2><a class="btn btn-secondary" href="/modelo/protheus.xlsx"><i class="ph ph-download-simple"></i> Baixar modelo Protheus</a></header>
+  <p>Envie a planilha com MOVIMENTOS e CONTAS. O modelo do workshop também traz centros, estrutura DRE e orçamento, com os vínculos prontos para importar.</p>
+  <form class="upload-form" method="post" enctype="multipart/form-data" data-upload-form>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <div><span class="im-lbl">Planilha Excel ou CSV · até 12 MB</span></div>
+    <label class="im-drop" for="arquivo" tabindex="0" data-dropzone>
+      <i class="ph ph-file-arrow-up"></i><strong>Clique ou arraste a planilha aqui</strong><span>Datas, contas e valores serão conferidos antes de gravar.</span><small id="arquivo-nome" class="im-arq">Nenhum arquivo selecionado</small>
+    </label>
+    <input id="arquivo" type="file" name="file" accept=".xlsx,.csv" required class="im-inp" data-file-name="#arquivo-nome">
+    <div class="im-acao"><span class="im-msg" data-upload-feedback role="status" aria-live="polite"></span><button class="btn btn-primary" type="submit" disabled data-upload-submit><i class="ph ph-magnifying-glass"></i> Conferir arquivo</button></div>
+  </form>
+</section>
+<section class="page-grid">
+  <article class="card"><h2>Uma fonte, vários relatórios</h2><p>Os lançamentos alimentam Balancete, Balanço, Razão, DRE, DMPL e Fluxo de caixa. O cadastro define como cada conta aparece.</p></article>
+  <article class="card"><h2>Sua classificação, preservada</h2><p>Contas sem classificação ficam pendentes. Complete os grupos, centros de custo e regras gerenciais em Cadastros.</p></article>
+</section>
+<details class="formatos-ajuda"><summary>Outros formatos aceitos</summary><p class="muted">Também aceitamos as abas Lançamentos e Contas, ou CSV com os mesmos campos. Datas do Excel, dd/mm/aaaa, aaaa-mm-dd e aaaammdd são reconhecidas.</p><a class="btn btn-secondary" href="/modelo/planilha.xlsx"><i class="ph ph-download-simple"></i> Baixar modelo de lançamentos</a></details>
+{% else %}
+<section class="card">
+  <header class="card-header"><h2>Prévia conferida</h2><span class="muted">Nada gravado ainda</span></header>
+  <p>{{ payload.resumo.linhas }} lançamentos · {{ payload.resumo.contas }} contas · {{ payload.resumo.inicio|data_br }} a {{ payload.resumo.fim|data_br }}.</p>
+  {% if payload.hierarquia %}<p><strong>{{ payload.hierarquia.sinteticas }}</strong> contas sintéticas · <strong>{{ payload.hierarquia.analiticas }}</strong> analíticas reconhecidas no plano.</p>{% endif %}
+  <p>Débitos {{ payload.resumo.debitos|money }} · créditos {{ payload.resumo.creditos|money }}.</p>
+  {% if payload.dre %}<div class="notice notice-info"><strong>DRE gerencial no arquivo:</strong> {{ payload.dre.grupos|length if payload.dre.grupos is not none else 0 }} linhas de estrutura · {{ payload.dre.contas|length }} destinos de contas · {{ payload.dre.centros|length }} destinos de centros. A confirmação carrega essas regras junto com os lançamentos. Destino em branco vai para ZZ - SEM REGRA.</div>{% endif %}
+  {% if payload.dre_aviso_acrescentar %}<div class="notice notice-error"><strong>Acrescentar à base atual:</strong> {{ payload.dre_aviso_acrescentar }} A opção Nova base usa a estrutura do arquivo.</div>{% endif %}
+  {% if payload.orcamento %}<div class="notice notice-info"><strong>Orçamento no arquivo:</strong> {{ payload.orcamento|length }} valores por conta e mês, de {{ payload.orcamento[0].competencia }} a {{ payload.orcamento[-1].competencia }}. A DRE usa o orçado após o último mês realizado, até dezembro.</div>{% endif %}
+  {% for aviso in payload.avisos %}<div class="notice notice-info">{{ aviso }}</div>{% endfor %}
+  {% if payload.pendentes %}<div class="notice notice-error">{{ payload.pendentes|length }} contas precisam de classificação antes dos demonstrativos: {{ payload.pendentes[:15]|join(', ') }}.</div>{% endif %}
+  <form method="post" action="/importar/confirmar" class="form-stack">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}"><input type="hidden" name="token" value="{{ token }}">
+    {% if stats.linhas %}<div class="field"><label for="modo">Como usar esta planilha?</label><select id="modo" name="modo" required><option value="">Escolha uma opção</option><option value="substituir">Usar como nova base — arquivar a atual</option><option value="acrescentar">Acrescentar à base atual</option></select></div><p class="muted">Nova base arquiva os dados atuais, substitui orçamento e extrato anteriores e carrega a estrutura DRE e o orçamento fornecidos no arquivo. Acrescentar preserva estrutura, destinos e valores orçados já cadastrados, incluindo apenas o que falta.</p>{% else %}<input type="hidden" name="modo" value="substituir">{% endif %}
+    <div class="form-actions"><a class="btn btn-secondary" href="/importar">Escolher outro arquivo</a><button class="btn btn-primary" type="submit"><i class="ph ph-check"></i> Confirmar importação</button></div>
+  </form>
+</section>
+{% if contas_previa %}<section class="table-card"><header class="section-head"><h2>Plano de contas reconhecido</h2></header><div class="table-scroll"><table id="importacao-plano-arvore" data-tree="true"><thead><tr><th>Conta / descrição</th><th>Tipo</th><th class="numeric">Nível</th></tr></thead><tbody>{% for c in contas_previa %}<tr data-node-id="{{ c.node_id }}" data-parent-id="{{ c.parent_id }}" data-level="{{ c.level }}" class="{{ 'row-subtotal' if not c.analitica }}"><td>{{ rotulo(c) }}</td><td>{{ 'Analítica' if c.analitica else 'Sintética' }}</td><td class="numeric">{{ c.nivel }}</td></tr>{% endfor %}</tbody></table></div></section>{% endif %}
+{% if payload.dre and payload.dre.grupos %}<section class="table-card"><header class="section-head"><h2>Estrutura DRE reconhecida</h2></header><div class="table-scroll"><table><thead><tr><th>Código</th><th>Linha</th><th class="numeric">Ordem</th><th>Tipo</th></tr></thead><tbody>{% for g in payload.dre.grupos %}<tr><td>{{ g.codigo }}</td><td>{{ g.nome }}</td><td class="numeric">{{ g.ordem }}</td><td>{{ g.tipo }}</td></tr>{% endfor %}</tbody></table></div></section>{% endif %}
+<section class="table-card"><header class="section-head"><h2>Amostra dos primeiros 20 lançamentos</h2></header><div class="table-scroll"><table><thead><tr><th>Data</th><th>Documento</th><th>Conta</th><th>Centro</th><th>Histórico</th><th class="numeric">Débito</th><th class="numeric">Crédito</th></tr></thead><tbody>{% for x in payload.rows[:20] %}<tr><td>{{ x.data|data_br }}</td><td>{{ x.documento_id }}</td><td>{{ x.conta_id }}</td><td>{{ x.centro_id }}</td><td>{{ x.historico }}</td><td class="numeric">{{ x.debito_centavos|money_num }}</td><td class="numeric">{{ x.credito_centavos|money_num }}</td></tr>{% endfor %}</tbody></table></div></section>
+{% endif %}
+{% endblock %}

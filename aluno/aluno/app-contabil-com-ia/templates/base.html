@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ title|default(app_nome, true) }} · {{ app_nome }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='fonts/fonts.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='phosphor/regular/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='phosphor/bold/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/tokens.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/app.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/layout.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/componentes.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/modal-edicao.css') }}">
+  {% if report_format is not none %}<link rel="stylesheet" href="{{ url_for('static',filename='css/apresentacao-relatorios.css') }}">{% endif %}
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="/" aria-label="{{ app_nome }}, início"><span class="brand-mark"><i class="ph-bold ph-chart-line-up"></i></span>{% if app_nome == 'APP CONTÁBIL COM IA' %}<span>APP CONTÁBIL<br><b>COM IA</b></span>{% else %}<span>{{ app_nome }}</span>{% endif %}</a>
+      <nav class="nav sidebar-nav" aria-label="Navegação principal">
+        <a class="nav-item {{ 'is-active' if active == 'home' }}" href="/home" {% if active == 'home' %}aria-current="page"{% endif %}><i class="ph ph-house" aria-hidden="true"></i><span>Início</span></a>
+      {% for grupo in menu_grupos %}
+        {% set aberto = active in grupo.itens|map(attribute='slug')|list %}
+        <div class="grupo {{ 'aberto' if aberto }}" data-nav-group="{{ grupo.slug }}">
+          <button class="grupo-cab" type="button" aria-expanded="{{ 'true' if aberto else 'false' }}" aria-controls="nav-{{ grupo.slug }}"><span class="grupo-label">{{ grupo.nome }}</span><i class="ph ph-caret-right grupo-chevron"></i></button>
+          <div class="grupo-corpo" id="nav-{{ grupo.slug }}" {{ 'hidden' if not aberto }}>
+          {% for item in grupo.itens %}
+            <a class="nav-item {{ 'is-active' if item.slug == active }}" href="{{ '/' ~ item.slug }}" {% if item.slug == active %}aria-current="page"{% endif %}><i class="ph {{ item.icon }}"></i><span>{{ item.title }}</span></a>
+          {% endfor %}
+          </div>
+        </div>
+      {% endfor %}
+      </nav>
+      <div class="sidebar-foot">
+        {% if modulo_disponivel('limpar') %}
+        <a class="nav-item limpar-link {{ 'is-active' if active == 'limpar' }}" href="/limpar"><i class="ph ph-trash"></i><span>Limpar</span></a>
+        {% endif %}
+        {% if modulo_disponivel('configuracao-ia') %}
+        <a class="nav-item {{ 'is-active' if active == 'configuracao-ia' }}" href="/configuracao-ia" {% if active == 'configuracao-ia' %}aria-current="page"{% endif %}><i class="ph ph-gear-six" aria-hidden="true"></i><span>Configuração da IA</span></a>
+        {% endif %}
+        {% if modulo_disponivel('relatorio-mensal') %}
+        <a class="nav-link" href="/relatorio-mensal">Relatório mensal</a>
+        {% endif %}
+        {% if modulo_disponivel('usuarios') %}
+        <a class="nav-item {{ 'is-active' if active == 'usuarios' }}" href="/usuarios" {% if active == 'usuarios' %}aria-current="page"{% endif %}><i class="ph ph-user-circle" aria-hidden="true"></i><span>Usuários</span></a>
+        {% endif %}
+        <a class="nav-item {{ 'is-active' if active == 'minha-senha' }}" href="/minha-senha" {% if active == 'minha-senha' %}aria-current="page"{% endif %}><i class="ph ph-lock-key" aria-hidden="true"></i><span>Minha senha</span></a>
+        <div class="account"><span class="avatar">{{ (user_email or 'T')[:1]|upper }}</span><span><strong>{{ user_email or 'teste@teste.com' }}</strong><small>Sessão demonstrativa</small></span></div>
+        <form method="post" action="/logout"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="logout" type="submit" title="Sair"><i class="ph ph-sign-out"></i><span>Sair</span></button></form>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar"><button class="menu-toggle" type="button" data-sidebar-toggle aria-label="Abrir navegação"><i class="ph ph-list"></i></button><div><p class="eyebrow">CONTROLE FINANCEIRO</p><h1>{% block page_title %}{{ title }}{% endblock %}</h1></div><div class="topbar-actions">{% block top_actions %}{% endblock %}</div></header>
+      <section class="content">{% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}{% for category, message in messages %}<div class="notice notice-{{ category|default('info', true) }}">{{ message }}</div>{% endfor %}{% endif %}{% endwith %}{% block report_presentation %}{% if report_format is not none %}{% include "apresentacao_relatorios.html" %}{% endif %}{% endblock %}{% block content %}{% endblock %}</section>
+    </main>
+  </div>
+  <script src="{{ url_for('static', filename='js/app.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/tabela-avancada.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/componentes.js') }}" defer></script>
+  <script src="{{ url_for('static', filename='js/modal-edicao.js') }}" defer></script>
+  {% if report_format is not none %}<script src="{{ url_for('static',filename='js/apresentacao-relatorios.js') }}" defer></script>{% endif %}
+  {% block scripts_extra %}{% endblock %}
+</body>
+</html>

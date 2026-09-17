@@ -1,0 +1,17 @@
+.dre-top-filters{display:flex;align-items:center;gap:12px;margin:0}
+.dre-year-control{width:104px;flex-shrink:0}
+.dre-top-filters .cmp-select-panel{min-width:150px;right:0;left:auto}
+.dre-table-heading{display:grid;gap:4px;margin-right:auto}
+.dre-table-heading small{font-size:12px}
+.dre-table-heading h2{margin:0}
+#dre-quadro .report-toolbar-compact{padding:0 12px 0 0;border:0;border-radius:0;background:transparent;gap:8px;position:relative}
+#dre-quadro .report-toolbar-compact .notice{position:absolute;right:0;top:calc(100% + 12px);min-width:260px;z-index:80}
+.ta-av-option{justify-content:space-between;gap:12px}.ta-av-option[aria-checked="true"]{color:var(--accent-soft)}
+.topbar:has(.dre-top-filters){height:auto;min-height:76px;padding-top:12px;padding-bottom:12px;gap:16px}
+.dre-source{display:block;margin:5px 0 4px;font-size:10px;letter-spacing:0;text-transform:none;white-space:nowrap}.source-realizado{color:var(--text)}.source-orcado{color:var(--accent-soft)}.source-misto{color:var(--accent)}
+.dre-missing{padding:0 18px 14px;color:var(--muted);font-size:12px;margin:0}.dre-missing a{color:var(--accent-soft);text-decoration:underline}
+#dre-quadro th.numeric{min-width:112px}#dre-quadro td.numeric{font-size:12px}#dre-quadro td.numeric small{display:block;margin-top:4px;font-size:10px}
+#dre-quadro td.numeric a{color:inherit}#dre-quadro td.numeric a:hover{text-decoration:underline;color:var(--accent-soft)}
+.dre-footer{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:20px;padding:16px 18px;border-top:1px solid var(--border);font-size:13px}.dre-footer>strong:first-child{margin-right:auto}
+@media(max-width:1100px){#dre-quadro>.section-head{flex-wrap:wrap;row-gap:16px}#dre-quadro .tabela-acoes{margin-left:auto}}
+@media(max-width:650px){.topbar:has(.dre-top-filters){flex-wrap:wrap}.topbar:has(.dre-top-filters) .topbar-actions{width:100%;margin-left:0}.dre-top-filters{width:100%;gap:8px;justify-content:flex-end}.dre-top-filters .cmp-choice [role="radio"]{padding:0 10px}.dre-year-control{width:88px}.dre-top-filters .cmp-select-panel{left:0;right:auto}#dre-quadro .tabela-acoes{flex-wrap:wrap;justify-content:flex-end;max-width:100%}#dre-quadro .report-toolbar-compact{padding:0;width:100%}#dre-quadro .report-options{width:100%;justify-content:flex-end;gap:16px}}

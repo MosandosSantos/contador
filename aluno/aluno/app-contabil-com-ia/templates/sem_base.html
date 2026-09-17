@@ -1,0 +1,5 @@
+{% extends 'base.html' %}
+{% block top_actions %}<a class="btn btn-primary" href="{{ '/contas?pendentes=1' if classificacao_pendente else '/importar' }}"><i class="ph ph-{{ 'tree-structure' if classificacao_pendente else 'upload-simple' }}"></i>{{ 'Classificar contas' if classificacao_pendente else 'Importar lançamentos' }}</a>{% endblock %}
+{% block content %}
+<div class="vz"><i class="ph ph-{{ 'tree-structure' if classificacao_pendente else 'tray' }} vz-icone"></i><p class="vz-titulo">{{ 'Contas Aguardando Classificação' if classificacao_pendente else 'Nenhum Lançamento Importado' }}</p><p class="vz-sub">{{ 'Conclua a classificação das contas para gerar este demonstrativo.' if classificacao_pendente else 'Comece em Importar lançamentos. Os relatórios serão calculados a partir da sua planilha.' }}</p></div>
+{% endblock %}

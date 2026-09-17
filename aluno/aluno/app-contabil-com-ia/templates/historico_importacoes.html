@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% from 'estado_vazio.html' import vazio %}
+{% block top_actions %}<a class="btn btn-primary" href="/importar"><i class="ph ph-upload-simple" aria-hidden="true"></i> Importar lançamentos</a>{% endblock %}
+{% block content %}
+<p class="intro">Acompanhe os arquivos confirmados e o que cada importação acrescentou à base.</p>
+{% if rows %}
+<section class="table-card">
+  <header class="section-head"><h2>Importações confirmadas</h2><span class="muted">{{ rows|length }} {{ 'importação' if rows|length == 1 else 'importações' }}</span></header>
+  <div class="table-scroll">
+    <table id="historico-importacoes">
+      <thead><tr>
+        <th data-col-key="momento" data-tipo="data">Data e hora</th>
+        <th data-col-key="arquivo">Arquivo</th>
+        <th data-col-key="periodo">Período dos lançamentos</th>
+        <th data-col-key="modo">Modo</th>
+        <th data-col-key="novas" class="numeric">Novas</th>
+        <th data-col-key="existentes" class="numeric">Já existentes</th>
+        <th data-col-key="base" class="numeric">Base após</th>
+      </tr></thead>
+      <tbody>{% for row in rows %}{% set d = row.depois %}<tr>
+        <td>{{ row.momento.strftime('%d/%m/%Y %H:%M:%S') }}</td>
+        <td>{{ d.get('arquivo') or 'Não registrado' }}</td>
+        <td>{% if d.get('inicio') and d.get('fim') %}{{ d.inicio|data_br }} a {{ d.fim|data_br }}{% else %}Não registrado{% endif %}</td>
+        <td>{{ modos.get(d.get('modo'), 'Não registrado') }}</td>
+        <td class="numeric">{{ d.get('novas', '—') }}</td>
+        <td class="numeric">{{ d.get('ignoradas', '—') }}</td>
+        <td class="numeric">{{ d.get('linhas', '—') }}</td>
+      </tr>{% endfor %}</tbody>
+    </table>
+  </div>
+</section>
+<p class="muted">Contagens em linhas de lançamento. “Base após” é o total no momento da confirmação. Horários de Brasília.</p>
+{% else %}
+{{ vazio('Nenhuma importação confirmada', 'Depois de conferir e confirmar sua planilha, o registro aparecerá aqui.') }}
+{% endif %}
+{% endblock %}

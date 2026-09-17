@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% block title %}Relatório mensal — {{ nome_app }}{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Relatório mensal</h1>
+    <p class="muted">Resumo narrativo do mês — números calculados pelo app; texto pela IA quando configurada.</p>
+  </div>
+</div>
+
+<form method="post" class="form-inline-inline mb-3">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <label for="competencia">Mês</label>
+  <input type="month" id="competencia" name="competencia" value="{{ competencia }}" max="{{ competencia_max }}">
+  <label for="foco" class="ms-3">Foco (opcional)</label>
+  <input type="text" id="foco" name="foco" placeholder="ex.: despesas administrativas" style="max-width:320px">
+  <button type="submit" class="btn btn-primary">Gerar relatório</button>
+</form>
+
+{% if mov == 0 %}
+<section class="table-card">
+  <p>Sem lançamentos importados ainda. Importe uma base em <strong>Importar</strong> para gerar o relatório.</p>
+</section>
+{% else %}
+
+<section class="kpi-grid report-kpis">
+  <article class="kpi">
+    <small>Receitas de {{ competencia[5:7] }}/{{ competencia[:4] }}</small>
+    <strong>{{ resultado.receitas|money_num }}</strong>
+  </article>
+  <article class="kpi">
+    <small>Despesas</small>
+    <strong>{{ resultado.despesas|money_num }}</strong>
+  </article>
+  <article class="kpi">
+    <small>Resultado do mês</small>
+    <strong>{{ resultado.resultado|money_num }}</strong>
+    <span>{% if resultado.receitas %}Margem {{ '%.1f%%'|format(resultado.margem)|replace('.',',') }}{% else %}Sem receitas no mês{% endif %}</span>
+  </article>
+  <article class="kpi">
+    <small>Caixa ao fim do mês</small>
+    <strong>{{ caixa_fim|money_num }}</strong>
+    <span>Variou {{ variacao|money_num }} no mês</span>
+  </article>
+</section>
+
+{% if destaques %}
+<section class="table-card">
+  <h2>Destaques do app (calculados, auditáveis)</h2>
+  <ul class="list-insights">
+    {% for d in destaques %}
+    <li><strong>{{ d.titulo }}</strong> — {{ d.texto }}</li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+
+{% if aviso %}<p class="notice">{{ aviso }}</p>{% endif %}
+
+{% if narrativa %}
+<section class="table-card narrative">
+  <h2>Resumo narrativo <small class="muted">({{ 'IA NVIDIA' if modo == 'nvidia' else 'plano local do app' }})</small></h2>
+  {% for paragrafo in narrativa %}
+  <p>{{ paragrafo }}</p>
+  {% endfor %}
+  <p class="muted">A IA não executou nada e não recebeu lançamentos brutos — apenas os agregados calculados acima.</p>
+</section>
+{% endif %}
+
+<section class="table-card">
+  <h2>Composição do resultado de {{ competencia[5:7] }}/{{ competencia[:4] }}</h2>
+  <div class="table-scroll">
+    <table id="composicao-resultado">
+      <thead><tr><th>Conta</th><th class="numeric">Movimento</th><th>Natureza</th></tr></thead>
+      <tbody>
+        {% for d in resultado.detalhes %}
+        <tr>
+          <td>{{ d.conta }}</td>
+          <td class="numeric">{{ d.movimento|money_num }}</td>
+          <td>{{ d.natureza }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

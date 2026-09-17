@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block page_title %}Análise financeira{% endblock %}
+{% block report_presentation %}{% endblock %}
+{% block head_extra %}<link rel="stylesheet" href="{{ url_for('static', filename='css/analise-chat.css') }}">{% endblock %}
+{% block top_actions %}
+  <button class="btn btn-secondary" type="button" data-analise-new><i class="ph ph-plus" aria-hidden="true"></i> Novo chat</button>
+{% endblock %}
+{% block content %}
+<section class="analise-chat" data-analise-chat data-csrf="{{ csrf_token }}" data-ultimo-importado="{{ ultimo_importado or '' }}" data-money-mil="{{ 'true' if report_format and report_format.mil else 'false' }}" data-money-centavos="{{ 'true' if report_format and report_format.centavos else 'false' }}">
+  <header class="analise-intro">
+    <div class="analise-intro-icon"><i class="ph ph-chart-line-up" aria-hidden="true"></i></div>
+    <div><p class="eyebrow">ANÁLISE FINANCEIRA</p><h2>Converse com os números do seu negócio</h2><p>Faça uma pergunta e acompanhe a leitura, os cortes considerados e a origem dos dados.</p></div>
+  </header>
+  <p class="analise-base" data-analise-base {% if not ultimo_importado %}hidden{% endif %}><i class="ph ph-database" aria-hidden="true"></i> Última base importada: <span>{{ ultimo_importado|data_br if ultimo_importado else '' }}</span></p>
+
+  <section class="analise-history" data-analise-history aria-live="polite" aria-label="Conversas da análise">
+    <article class="analise-welcome" data-analise-welcome>
+      <span class="analise-welcome-icon"><i class="ph ph-sparkle" aria-hidden="true"></i></span>
+      <h3>Por onde você quer começar?</h3>
+      <p>As respostas são calculadas a partir da base importada. Você pode continuar a conversa para comparar períodos, entender mudanças e explorar os quadros.</p>
+      <div class="analise-suggestions" aria-label="Perguntas sugeridas">
+        <button type="button" data-analise-suggestion>Qual a relação PL x ativo nos últimos 3 meses?</button>
+        <button type="button" data-analise-suggestion>Como evoluiu o capital de giro?</button>
+        <button type="button" data-analise-suggestion>Como está o faturamento trimestre sobre trimestre?</button>
+        <button type="button" data-analise-suggestion>Compare receita e lucro.</button>
+      </div>
+    </article>
+  </section>
+
+  <form class="analise-composer" data-analise-form>
+    <label class="sr-only" for="analise-pergunta">Sua pergunta sobre os dados financeiros</label>
+    <textarea id="analise-pergunta" data-analise-input rows="1" maxlength="1000" placeholder="Pergunte sobre PL, ativo, capital de giro, faturamento, receita ou lucro…" required></textarea>
+    <button class="btn btn-primary" type="submit" data-analise-send><i class="ph ph-paper-plane-tilt" aria-hidden="true"></i><span>Enviar</span></button>
+  </form>
+  <p class="analise-status" data-analise-status role="status"></p>
+</section>
+
+
+{% endblock %}
+{% block scripts_extra %}<script src="{{ url_for('static', filename='js/analise-chat.js') }}" defer></script>{% endblock %}

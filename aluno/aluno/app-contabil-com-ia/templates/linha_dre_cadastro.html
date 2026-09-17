@@ -1,0 +1,10 @@
+{% macro nome_destino(valor) %}{% if valor=='__centro__' %}Prevalece DRE{% elif valor=='__legado__' %}Vínculos anteriores{% elif not valor %}ZZ - SEM REGRA{% else %}{{ linhas_gerenciais|selectattr('codigo','equalto',valor)|map(attribute='nome')|first|default(valor) }}{% endif %}{% endmacro %}
+{% macro destino(id,valor='',permite_centro=false,anteriores=[]) %}
+<div class="field grow"><label for="{{ id }}">Linha DRE gerencial</label><select id="{{ id }}" name="dre_destino">
+  <option value="" {{ 'selected' if not valor }}>ZZ - SEM REGRA</option>
+  {% if permite_centro %}<option value="__centro__" {{ 'selected' if valor=='__centro__' }}>Prevalece DRE</option>{% endif %}
+  {% if valor=='__legado__' %}<option value="__legado__" selected>Vínculos anteriores (preservados)</option>{% endif %}
+  {% for linha in linhas_gerenciais %}<option value="{{ linha.codigo }}" {{ 'selected' if valor==linha.codigo }}>{{ linha.nome }}</option>{% endfor %}
+</select><small class="muted">{% if permite_centro %}Conta analítica de resultado: escolha a linha ou use Prevalece DRE para consultar o centro de custo.{% else %}Usada quando a conta está em Prevalece DRE. Sem destino, o valor vai para ZZ - SEM REGRA.{% endif %}</small></div>
+{% if anteriores %}<p class="muted">Vínculos anteriores: {% for v in anteriores %}{{ v.centro_id or 'Geral' }} → {{ nome_destino(v.grupo_codigo) }}{{ '; ' if not loop.last }}{% endfor %}. Escolher outro destino substitui esses vínculos desta conta.</p>{% endif %}
+{% endmacro %}

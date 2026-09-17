@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% from 'controle_escolha.html' import escolha %}
+{% from 'modal_edicao.html' import modal with context %}
+{% block head_extra %}<link rel="stylesheet" href="{{ url_for('static',filename='css/dre-niveis.css') }}"><link rel="stylesheet" href="{{ url_for('static',filename='css/balancete.css') }}">{% endblock %}
+{% block report_presentation %}{% endblock %}
+{% block top_actions %}
+<form method="get" id="balancete-tipo" class="balancete-top-filters">
+  <input type="hidden" name="data_de" value="{{ data_de }}"><input type="hidden" name="data_ate" value="{{ data_ate }}">
+  <span class="muted">Tipo</span>{{ escolha('tipo','Tipo',tipo,[('mensal','Do Mês','ph-calendar'),('mes-a-mes','Mês a mês','ph-calendar-blank')]) }}
+  <noscript><button class="btn btn-secondary">Consultar</button></noscript>
+</form>
+<button class="btn btn-secondary" type="button" data-edit-modal="balancete-filtro" data-record='{{ {"data_de":data_de,"data_ate":data_ate}|tojson }}'><i class="ph ph-funnel" aria-hidden="true"></i> Filtro</button>
+{% endblock %}
+{% block content %}
+<p class="intro">{% if tipo == 'mes-a-mes' %}Saldo final no fim de cada mês, com todo o histórico anterior.{% else %}Saldo inicial, movimento do intervalo e saldo final. Expanda as contas para conferir os detalhes.{% endif %}</p>
+<section class="table-card statement" id="balancete-quadro">
+  <header class="section-head"><div class="balancete-heading"><h2>Balancete{% if tipo == 'mes-a-mes' %} · Mês a mês{% endif %}</h2><small class="muted">{{ data_de[8:10] }}/{{ data_de[5:7] }}/{{ data_de[:4] }} a {{ data_ate[8:10] }}/{{ data_ate[5:7] }}/{{ data_ate[:4] }}{% if tipo == 'mes-a-mes' %} · Fechamentos mensais{% endif %} · <span data-report-unit>{{ 'R$ mil' if report_format.mil else 'R$' }}</span></small></div><div class="tabela-acoes">{% with report_compact=true %}{% include 'apresentacao_relatorios.html' %}{% endwith %}</div></header>
+  {% if balancete.futuro %}<p class="balancete-corte">Lançamentos disponíveis até {{ balancete.ultimo[8:10] }}/{{ balancete.ultimo[5:7] }}/{{ balancete.ultimo[:4] }}.{% if tipo == 'mes-a-mes' %} Meses posteriores aparecem com —.{% else %} O saldo considera os lançamentos disponíveis no intervalo.{% endif %}</p>{% endif %}
+  <div class="table-scroll"><table id="balancete-arvore" data-tree="true" data-tree-depth="2" data-report-hierarchy="true"><thead><tr><th data-col-key="conta">Conta / descrição</th>{% for coluna in balancete.colunas %}<th class="numeric" data-col-key="{{ coluna.chave }}">{{ coluna.nome }}{% if tipo == 'mes-a-mes' %}<small>Saldo final D–C</small>{% endif %}</th>{% endfor %}</tr></thead>
+  <tbody>{% for c in balancete.linhas %}<tr data-node-id="{{ c.node_id }}" data-parent-id="{{ c.parent_id }}" data-level="{{ c.nivel }}" class="{{ 'row-subtotal' if c.tem_filhos }}"><td><div class="tree-cell tree-level-{{ c.nivel }}">{% if c.tem_filhos %}<button type="button" class="tree-toggle" data-tree-toggle aria-expanded="true" aria-label="Recolher {{ c.nome }}"><i class="ph ph-caret-down" aria-hidden="true"></i></button>{% else %}<span class="tree-spacer" aria-hidden="true"></span>{% endif %}{% if c._url and modulo_disponivel('razao') %}<a href="{{ c._url }}" title="Conferir lançamentos no Razão">{{ c.nome }}</a>{% else %}<span>{{ c.nome }}</span>{% endif %}</div></td>{% for coluna in balancete.colunas %}<td class="numeric">{{ c.valores[coluna.chave]|money_num }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+</section>
+<p class="muted">Contas sintéticas acumulam suas filhas. Não some as linhas sintéticas novamente às analíticas. D–C: débito menos crédito.</p>
+{% call modal('balancete-filtro','Filtro do balancete',url_for('pages.screen',active='balancete'),salvar='Aplicar filtro',metodo='get',icone='ph-funnel') %}
+<input type="hidden" name="tipo" value="{{ tipo }}">
+<div class="field"><label for="balancete-de">Data De</label><input type="date" id="balancete-de" name="data_de" value="{{ data_de }}" min="1900-01-01" max="2199-12-31" required></div>
+<div class="field"><label for="balancete-ate">Data Até</label><input type="date" id="balancete-ate" name="data_ate" value="{{ data_ate }}" min="1900-01-01" max="2199-12-31" required></div>
+<p class="muted balancete-filter-help">Do Mês usa as datas exatas. Mês a mês apresenta os saldos nos fins dos meses selecionados, incluindo o histórico anterior.</p>
+{% endcall %}
+{% call modal('dre-niveis-modal','Selecionar níveis',url_for('pages.screen',active='balancete'),salvar='Aplicar níveis') %}
+{% with niveis_raiz='Balancete', niveis_ajuda='Conta e centro na ordem escolhida' %}{% include 'niveis_relatorio.html' %}{% endwith %}
+{% endcall %}
+{% endblock %}
+{% block scripts_extra %}<script src="{{ url_for('static',filename='js/dre-niveis.js') }}" defer></script><script src="{{ url_for('static',filename='js/balancete.js') }}" defer></script>{% endblock %}

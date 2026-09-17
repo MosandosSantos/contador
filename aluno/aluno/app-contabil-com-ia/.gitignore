@@ -1,0 +1,13 @@
+.runtime/
+.venv/
+.env
+__pycache__/
+*.pyc
+*.log
+z_Versoes/
+00_GENESIS/
+backups/
+gerar_versao.bat
+restaurar_ultima_versao.bat
+*_ultimo.txt
+esocial_rascunho_ultimo.zip

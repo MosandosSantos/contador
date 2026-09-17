@@ -1,0 +1,31 @@
+{% extends 'base.html' %}{% from 'modal_edicao.html' import modal with context %}
+{% block top_actions %}<button type="button" class="btn btn-primary" data-create-modal="criar-usuario"><i class="ph ph-plus" aria-hidden="true"></i> Criar usuário</button>{% endblock %}
+{% block content %}<p class="intro">Pessoas com acesso a esta instância. O primeiro usuário é administrador; admin pode criar, excluir e redefinir senhas.</p>
+{% if rows %}<section class="table-card"><header class="section-head"><h2>{{ rows|length }} usuário(s)</h2></header><div class="table-scroll"><table><thead><tr><th>E-mail</th><th>Nível</th><th>Criado em</th><th>Ações</th></tr></thead><tbody>{% for u in rows %}<tr><td>{{ u.email }}</td><td>{{ 'Administrador' if u.admin else 'Usuário' }}</td><td>{{ u.criado|data_br }}</td><td>
+<button type="button" class="btn btn-secondary" data-edit-modal="senha-usuario" data-record='{{ {"email": u.email}|tojson }}'>Senha</button>
+{% if u.email != eu %}<button type="button" class="btn btn-secondary" data-edit-modal="nivel-usuario" data-record='{{ {"email": u.email, "admin": ("1" if u.admin else "0")}|tojson }}'>Nível</button>
+<button type="button" class="btn btn-secondary" data-edit-modal="excluir-usuario" data-record='{{ {"email": u.email}|tojson }}'>Excluir</button>{% endif %}
+</td></tr>{% endfor %}</tbody></table></div></section>
+{% else %}<section class="table-card"><div class="conc-no-results">Nenhum usuário listado. Use <strong>Criar usuário</strong> no topo.</div></section>{% endif %}
+{% call modal('criar-usuario','Criar usuário','/usuarios',criar=true,salvar='Criar usuário') %}
+<input type="hidden" name="operacao" value="criar">
+<div class="field"><label for="usu-criar-email">E-mail (login)</label><input id="usu-criar-email" name="email" type="email" required maxlength="200"></div>
+<div class="field"><label for="usu-criar-senha">Senha inicial</label><input id="usu-criar-senha" name="senha" type="password" required minlength="8" autocomplete="new-password" placeholder="8+ caracteres, letras e números"></div>
+<div class="field"><label for="usu-criar-admin"><input id="usu-criar-admin" name="admin" value="1" type="checkbox"> Administrador</label></div>
+{% endcall %}
+{% call modal('senha-usuario','Redefinir senha','/usuarios') %}
+<input type="hidden" name="operacao" value="senha">
+<div class="field"><label for="usu-senha-email">E-mail</label><input id="usu-senha-email" name="email" readonly required></div>
+<div class="field"><label for="usu-senha-nova">Nova senha</label><input id="usu-senha-nova" name="senha" type="password" required minlength="8" autocomplete="new-password" placeholder="8+ caracteres, letras e números"></div>
+{% endcall %}
+{% call modal('nivel-usuario','Alterar nível de acesso','/usuarios') %}
+<input type="hidden" name="operacao" value="admin">
+<div class="field"><label for="usu-nivel-email">E-mail</label><input id="usu-nivel-email" name="email" readonly required></div>
+<div class="field"><label for="usu-nivel-admin">Nível de acesso</label><select id="usu-nivel-admin" name="admin" required><option value="1">Administrador</option><option value="0">Usuário</option></select></div>
+{% endcall %}
+{% call modal('excluir-usuario','Excluir usuário','/usuarios') %}
+<input type="hidden" name="operacao" value="excluir">
+<div class="field"><label for="usu-excluir-email">E-mail</label><input id="usu-excluir-email" name="email" readonly required></div>
+<p class="muted">Essa ação remove o acesso imediatamente e não pode ser desfeita.</p>
+{% endcall %}
+{% endblock %}

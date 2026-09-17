@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block page_title %}EFD Contribuições · {{ periodo }}{% endblock %}
+{% block top_actions %}
+<form method="get" action="/efd-contribuicoes">
+  <input name="periodo" value="{{ periodo }}" aria-label="Período (AAAA-MM)" maxlength="7" placeholder="2026-08">
+  <button class="btn btn-secondary" type="submit">Trocar período</button>
+</form>
+<a class="btn btn-primary" href="/exportar/efd-contribuicoes?periodo={{ periodo }}"><i class="ph ph-download-simple" aria-hidden="true"></i> Gerar arquivo EFD-Contribuições</a>
+{% endblock %}
+{% block content %}
+<p class="intro">Escrituração Fiscal Digital das Contribuições (PIS/COFINS), mensal. Os números vêm dos documentos lançados em <a href="/nf?periodo={{ periodo }}">NF e operações</a>.</p>
+{% if pendencias %}<section class="card"><h2>Pendências</h2><ul>{% for p in pendencias %}<li>{{ p }}</li>{% endfor %}</ul></section>{% endif %}
+
+{% if numeros %}
+<section class="kpi-grid">
+  <div class="kpi"><p>Documentos no período</p><strong>{{ numeros.n_docs }}</strong></div>
+  <div class="kpi"><p>Itens consolidados</p><strong>{{ numeros.n_itens }}</strong></div>
+  <div class="kpi"><p>PIS do período</p><strong>{{ numeros.total_pis|money_num }}</strong></div>
+  <div class="kpi"><p>COFINS do período</p><strong>{{ numeros.total_cofins|money_num }}</strong></div>
+</section>
+{% if numeros.avisos %}<section class="card"><h2>Avisos de consistência</h2><ul>{% for a in numeros.avisos %}<li>{{ a }}</li>{% endfor %}</ul></section>{% endif %}
+{% else %}
+<section class="card"><div class="vz"><h3>Sem dados para o período</h3><p>Lance documentos fiscais em <a href="/nf?periodo={{ periodo }}">NF e operações</a> para consolidar o mês.</p></div></section>
+{% endif %}
+
+{% if numeros and numeros.pis %}
+<section class="table-card"><header class="section-head"><h2>Consolidação por CST</h2></header>
+  <div class="table-scroll"><table><thead><tr><th>Tributo</th><th>CST</th><th>Base de cálculo</th><th>Contribuição</th><th>Valor contábil</th></tr></thead><tbody>
+  {% for cst, v in numeros.pis.items() %}<tr><td>PIS</td><td>{{ cst }}</td><td class="num">{{ v.bc|money_num }}</td><td class="num">{{ v.vl|money_num }}</td><td class="num">{{ v.contab|money_num }}</td></tr>{% endfor %}
+  {% for cst, v in numeros.cofins.items() %}<tr><td>COFINS</td><td>{{ cst }}</td><td class="num">{{ v.bc|money_num }}</td><td class="num">{{ v.vl|money_num }}</td><td class="num">{{ v.contab|money_num }}</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+{% endif %}
+{% endblock %}

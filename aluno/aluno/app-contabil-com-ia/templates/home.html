@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block head_extra %}<link rel="stylesheet" href="{{ url_for('static',filename='css/home.css') }}">{% endblock %}
+{% block content %}
+<div class="home-page" data-home>
+  <section class="card home-hero" aria-labelledby="home-title">
+    <div class="home-welcome">
+      <p class="eyebrow">SEU PONTO DE PARTIDA</p>
+      <h2 id="home-title">{% if not modulo_disponivel('importar') %}Confira seus relatórios.{% elif tem_base %}Seus números,<br>do detalhe à decisão.{% else %}Comece pela sua base.{% endif %}</h2>
+      <p class="home-lead">{% if not modulo_disponivel('importar') %}Envie as bases contábil e financeira para encontrar diferenças, ausências e duplicidades.{% elif tem_base %}Confira os demonstrativos, acompanhe as variações e converse com os dados do seu negócio.{% else %}Importe seus lançamentos para dar vida aos demonstrativos. A conciliação também pode começar com seus dois relatórios.{% endif %}</p>
+      <div class="home-actions">
+        <a class="btn btn-primary" href="{{ proximo.url }}"><i class="ph {{ proximo.icone }}" aria-hidden="true"></i>{{ proximo.titulo }}</a>
+        <a class="btn btn-secondary" href="/conciliacao-arquivos"><i class="ph ph-arrows-left-right" aria-hidden="true"></i>Conciliar relatórios</a>
+      </div>
+    </div>
+    {% if modulo_disponivel('importar') %}<aside class="home-base" aria-label="Situação da base">
+      <div class="home-base-heading"><i class="ph ph-database" aria-hidden="true"></i><h3>Sua base</h3><a href="/historico" title="Histórico de importações" aria-label="Histórico de importações"><i class="ph ph-clock-counter-clockwise" aria-hidden="true"></i></a></div>
+      <div class="home-count"><strong>{{ '{:,}'.format(base.lancamentos).replace(',', '.') }}</strong><span>lançamentos importados</span></div>
+      <dl class="home-status">
+        <div><dt>Dados até</dt><dd>{{ base.fim|data_br if tem_base else 'Aguardando importação' }}</dd></div>
+        <div><dt>Grupo patrimonial</dt><dd>{% if not tem_base %}—{% elif pendentes %}<a class="home-pending" href="/contas">{{ pendentes }} conta{{ 's' if pendentes != 1 }} pendente{{ 's' if pendentes != 1 }}</a>{% else %}Sem contas pendentes{% endif %}</dd></div>
+{% if modulo_disponivel('configuracao-ia') %}        <div><dt>Inteligência artificial</dt><dd><a href="/configuracao-ia" class="{{ 'home-ready' if ia_configurada }}">{{ 'Configurada' if ia_configurada else 'Configurar IA' }}<i class="ph ph-arrow-up-right" aria-hidden="true"></i></a></dd></div>{% endif %}
+      </dl>
+    </aside>{% endif %}
+  </section>
+  {% if destaques %}
+  <section class="card home-insights" aria-labelledby="home-insights-title">
+    <div class="home-section-heading"><h2 id="home-insights-title">Destaques da sua base</h2><span>Calculados pelo app — auditáveis, sem IA.</span></div>
+    <ul class="list-insights">
+      {% for d in destaques %}<li><strong>{{ d.titulo }}</strong> — {{ d.texto }}</li>{% endfor %}
+    </ul>
+  </section>
+  {% endif %}
+  <section class="home-workspace" aria-labelledby="home-workspace-title">
+    <div class="home-section-heading"><h2 id="home-workspace-title">O que vamos fazer agora?</h2><span>Escolha por onde continuar.</span></div>
+    <div class="home-grid">
+      {% for atalho in atalhos %}
+      <a class="card home-shortcut {{ 'home-shortcut-ai' if atalho.url == '/analise' }}" href="{{ atalho.url }}">
+        <div class="home-shortcut-top"><span class="home-icon"><i class="ph {{ atalho.icone }}" aria-hidden="true"></i></span><span class="home-step">{{ '%02d'|format(loop.index) }}</span><i class="ph ph-arrow-up-right home-shortcut-arrow" aria-hidden="true"></i></div>
+        <h3>{{ atalho.titulo }}</h3><p>{{ atalho.texto }}</p>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  <p class="home-note"><i class="ph ph-path" aria-hidden="true"></i>Uma base, vários demonstrativos. O detalhe continua ao seu alcance.</p>
+</div>
+{% endblock %}

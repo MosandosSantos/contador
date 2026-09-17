@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block page_title %}Detalhe da conciliação{% endblock %}
+{% block head_extra %}<link rel="stylesheet" href="{{ url_for('static', filename='css/conciliacao.css') }}">{% endblock %}
+{% block top_actions %}<a class="btn btn-secondary" href="/conciliacao"><i class="ph ph-arrow-left"></i> Voltar à conciliação</a>{% endblock %}
+{% block content %}
+<section class="conc-detail-head"><div><p class="eyebrow">TÍTULO</p><h2>{{ row.titulo }}</h2><p>{{ row.cliente }} · {{ row.cnpj|default(row.cnpj_contabil|default('CNPJ não informado')) }}</p></div><span class="conc-badge status-{{ row.situacao|lower|replace(' ','-') }}">{{ row.situacao }}</span></section>
+<section class="page-grid conc-detail-summary"><article class="card"><small>Valor contábil</small><strong>{{ row.vc_centavos|money }}</strong><span>{{ row.cnpj_contabil|default('Sem CNPJ') }}</span></article><article class="card"><small>Valor financeiro</small><strong>{{ row.vf_centavos|money }}</strong><span>{{ row.cnpj_financeiro|default('Sem CNPJ') }}</span></article><article class="card"><small>Diferença</small><strong>{{ row.diferenca_centavos|money }}</strong><span>{{ row.motivo|default('Sem observação') }}</span></article></section>
+<aside class="conc-rule-note"><i class="ph ph-info"></i><span>A conciliação usa <strong>Título + CNPJ</strong>. Valores com diferença de até <strong>R$ 0,01</strong> são considerados conciliados; as demais pendências permanecem visíveis para tratamento.</span></aside>
+<section class="balance-grid conc-origins">
+{% for origem, label, arquivo in [('contabil', 'Origem contábil', labelsourcefilenames.contabil|default('Arquivo contábil')), ('financeiro', 'Origem financeira', labelsourcefilenames.financeiro|default('Arquivo financeiro'))] %}
+  {% set linhas_origem = row[origem]|default([]) %}<article class="table-card"><header class="section-head"><div><h2>{{ label }}</h2><span class="muted">{{ arquivo }}</span></div></header>{% if linhas_origem %}<div class="table-scroll"><table><thead><tr>{% for col in columns_origem %}<th class="{{ 'numeric' if col.numeric }}">{{ col.label }}</th>{% endfor %}</tr></thead><tbody>{% for item in linhas_origem %}<tr>{% for col in columns_origem %}<td class="{{ 'numeric' if col.numeric }}">{% if col.key == 'valor_centavos' %}{% if item[col.key] is none %}—{% else %}{{ item[col.key]|money }}{% endif %}{% elif col.key in ('emissao', 'vencimento', 'baixa') %}{{ item[col.key]|data_br if item[col.key] else '—' }}{% else %}{{ item[col.key]|default('—', true) }}{% endif %}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>{% else %}<div class="conc-origin-empty"><i class="ph ph-file-x"></i><p>Não há linha correspondente neste arquivo.</p></div>{% endif %}</article>
+{% endfor %}
+</section>
+{% endblock %}

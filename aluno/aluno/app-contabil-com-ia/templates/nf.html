@@ -1,0 +1,60 @@
+{% extends 'base.html' %}{% from 'modal_edicao.html' import modal with context %}
+{% block page_title %}NF e operações · {{ periodo }}{% endblock %}
+{% block top_actions %}
+<form method="get" action="/nf">
+  <input name="periodo" value="{{ periodo }}" aria-label="Período (AAAA-MM)" maxlength="7" placeholder="2026-08">
+  <button class="btn btn-secondary" type="submit">Trocar período</button>
+</form>
+<button type="button" class="btn btn-primary" data-create-modal="criar-doc"><i class="ph ph-plus" aria-hidden="true"></i> Documento</button>
+{% endblock %}
+{% block content %}
+<p class="intro">Documentos fiscais do mês que alimentam a EFD-Contribuições. Notas de saída/entrada geram C100/C170; serviços geram A100/A170. Os itens carregam CST, CFOP e os valores de PIS e COFINS.</p>
+{% if not participantes %}<div class="notice notice-error">Cadastre participantes (Cadastros → Participantes) antes de lançar documentos fiscais.</div>{% endif %}
+
+<section class="table-card"><header class="section-head"><h2>{{ documentos|length }} documento(s) no período</h2></header>
+  {% if documentos %}<div class="table-scroll"><table><thead><tr><th>Tipo</th><th>Participante</th><th>Número</th><th>Série</th><th>Data</th><th>Total informado</th><th>Σ itens</th><th>Ações</th></tr></thead><tbody>
+  {% for d in documentos %}<tr {% if doc and doc.id == d.id %}class="is-active-row"{% endif %}><td>{{ tipos[d.tipo] }}</td><td>{{ d.participante }}</td><td>{{ d.numero or '—' }}</td><td>{{ d.serie or '—' }}</td><td>{{ d.data_emissao|data_br }}</td><td class="num">{{ d.valor_total_centavos|money_num }}</td><td class="num">{{ d.total_itens|money_num }} ({{ d.n_itens }})</td><td><a class="btn btn-secondary" href="/nf?periodo={{ periodo }}&doc={{ d.id }}">Itens</a> <button type="button" class="btn btn-secondary" data-edit-modal="criar-doc" data-record='{{ {"id": d.id, "periodo": d.periodo, "tipo": d.tipo, "participante": d.participante, "numero": d.numero, "serie": d.serie, "data_emissao": d.data_emissao, "valor_total": "%.2f"|format(d.valor_total_centavos / 100) }|tojson }}'>Editar</button> <form method="post" action="/nf/doc/{{ d.id }}/remover" class="inline"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-secondary" type="submit">Remover</button></form></td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<div class="vz"><p>Nenhum documento neste período. Use <strong>Documento</strong> no topo para começar.</p></div>{% endif %}
+</section>
+
+{% if doc %}
+<section class="table-card"><header class="section-head"><h2>Itens do documento #{{ doc.id }} · {{ tipos[doc.tipo] }} {{ doc.numero }}</h2><button type="button" class="btn btn-primary" data-create-modal="criar-item"><i class="ph ph-plus" aria-hidden="true"></i> Item</button></header>
+  {% if itens %}<div class="table-scroll"><table><thead><tr><th>#</th><th>Descrição</th><th>NCM</th><th>CFOP</th><th>CST ICMS</th><th>CST PIS/COFINS</th><th>Valor item</th><th>ICMS (bc × aliq)</th><th>IPI</th><th>PIS (bc × aliq)</th><th>COFINS (bc × aliq)</th><th>Ações</th></tr></thead><tbody>
+  {% for x in itens %}<tr><td>{{ loop.index }}</td><td>{{ x.descricao }}</td><td>{{ x.ncm or '—' }}</td><td>{{ x.cfop or '—' }}</td><td>{{ x.cst_icms or '—' }}</td><td>{{ x.cst_pis }} / {{ x.cst_cofins }}</td><td class="num">{{ x.vl_item_centavos|money_num }}</td><td class="num">{{ x.vl_bc_icms_centavos|money_num }} × {{ x.aliq_icms }}% = {{ x.vl_icms_centavos|money_num }}</td><td class="num">{{ x.vl_ipi_centavos|money_num }}</td><td class="num">{{ x.vl_bc_pis_centavos|money_num }} × {{ x.aliq_pis }}% = {{ x.vl_pis_centavos|money_num }}</td><td class="num">{{ x.vl_bc_cofins_centavos|money_num }} × {{ x.aliq_cofins }}% = {{ x.vl_cofins_centavos|money_num }}</td><td><form method="post" action="/nf/item/{{ x.id }}/remover" class="inline"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-secondary" type="submit">Remover</button></form></td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<div class="vz"><p>Sem itens. Adicione os itens com CST e valores de ICMS, IPI, PIS e COFINS.</p></div>{% endif %}
+</section>
+{% endif %}
+
+{% call modal('criar-doc','Documento fiscal','/nf/doc') %}
+<input type="hidden" name="id" value="">
+<div class="field"><label for="doc-periodo">Período (AAAA-MM)</label><input id="doc-periodo" name="periodo" required maxlength="7" value="{{ periodo }}"></div>
+<div class="field"><label for="doc-tipo">Tipo</label><select id="doc-tipo" name="tipo" required>{% for chave, rotulo in tipos.items() %}<option value="{{ chave }}">{{ rotulo }}</option>{% endfor %}</select></div>
+<div class="field"><label for="doc-participante">Participante</label><select id="doc-participante" name="participante" required>{% for p in participantes %}<option value="{{ p.chave }}">{{ p.nome }}{% if p.documento %} · {{ p.documento }}{% endif %}</option>{% endfor %}</select></div>
+<div class="field"><label for="doc-numero">Número</label><input id="doc-numero" name="numero" maxlength="30"></div>
+<div class="field"><label for="doc-serie">Série</label><input id="doc-serie" name="serie" maxlength="5"></div>
+<div class="field"><label for="doc-data">Data de emissão</label><input id="doc-data" name="data_emissao" type="date" required></div>
+<div class="field"><label for="doc-total">Valor total (R$)</label><input id="doc-total" name="valor_total" inputmode="decimal" placeholder="0,00"></div>
+{% endcall %}
+{% call modal('criar-item','Item do documento','/nf/item') %}
+<input type="hidden" name="documento_id" value="{{ doc.id if doc else '' }}">
+<div class="field"><label for="it-descricao">Descrição</label><input id="it-descricao" name="descricao" required maxlength="200"></div>
+<div class="field"><label for="it-cfop">CFOP</label><input id="it-cfop" name="cfop" maxlength="4" placeholder="6101"></div>
+<div class="field"><label for="it-cst-pis">CST PIS</label><select id="it-cst-pis" name="cst_pis" required><option value="">Selecione…</option>{% for c in ['01','02','04','05','06','07','08','09','49','50','51','52','53','54','55','56','60','61','62','63','64','65','66','70','71','72','73','74','75','98','99'] %}<option value="{{ c }}">{{ c }}</option>{% endfor %}</select></div>
+<div class="field"><label for="it-cst-cofins">CST COFINS</label><select id="it-cst-cofins" name="cst_cofins" required><option value="">Selecione…</option>{% for c in ['01','02','04','05','06','07','08','09','49','50','51','52','53','54','55','56','60','61','62','63','64','65','66','70','71','72','73','74','75','98','99'] %}<option value="{{ c }}">{{ c }}</option>{% endfor %}</select></div>
+<div class="field"><label for="it-ncm">NCM</label><input id="it-ncm" name="ncm" maxlength="8" placeholder="84713000"></div>
+<div class="field"><label for="it-cst-icms">CST ICMS</label><select id="it-cst-icms" name="cst_icms"><option value="">Selecione…</option>{% for c in ['00','10','20','30','40','41','50','51','60','70','90'] %}<option value="{{ c }}">{{ c }}</option>{% endfor %}</select></div>
+<div class="field"><label for="it-bc-icms">Base ICMS (R$)</label><input id="it-bc-icms" name="vl_bc_icms" inputmode="decimal" placeholder="0,00"></div>
+<div class="field"><label for="it-aliq-icms">Alíquota ICMS (%)</label><input id="it-aliq-icms" name="aliq_icms" inputmode="decimal" placeholder="18,00"></div>
+<div class="field"><label for="it-vl-icms">ICMS (R$)</label><input id="it-vl-icms" name="vl_icms" inputmode="decimal" placeholder="0,00"></div>
+<div class="field"><label for="it-bc-ipi">Base IPI (R$)</label><input id="it-bc-ipi" name="vl_bc_ipi" inputmode="decimal" placeholder="0,00"></div>
+<div class="field"><label for="it-aliq-ipi">Alíquota IPI (%)</label><input id="it-aliq-ipi" name="aliq_ipi" inputmode="decimal" placeholder="10,00"></div>
+<div class="field"><label for="it-vl-ipi">IPI (R$)</label><input id="it-vl-ipi" name="vl_ipi" inputmode="decimal" placeholder="0,00"></div>
+<div class="field"><label for="it-vl-item">Valor do item (R$)</label><input id="it-vl-item" name="vl_item" required inputmode="decimal" placeholder="0,00"></div>
+<div class="field"><label for="it-bc-pis">Base PIS (R$)</label><input id="it-bc-pis" name="vl_bc_pis" inputmode="decimal" placeholder="0,00"></div>
+<div class="field"><label for="it-aliq-pis">Alíquota PIS (%)</label><input id="it-aliq-pis" name="aliq_pis" inputmode="decimal" placeholder="1,65"></div>
+<div class="field"><label for="it-vl-pis">PIS (R$)</label><input id="it-vl-pis" name="vl_pis" inputmode="decimal" placeholder="0,00"></div>
+<div class="field"><label for="it-bc-cofins">Base COFINS (R$)</label><input id="it-bc-cofins" name="vl_bc_cofins" inputmode="decimal" placeholder="0,00"></div>
+<div class="field"><label for="it-aliq-cofins">Alíquota COFINS (%)</label><input id="it-aliq-cofins" name="aliq_cofins" inputmode="decimal" placeholder="7,60"></div>
+<div class="field"><label for="it-vl-cofins">COFINS (R$)</label><input id="it-vl-cofins" name="vl_cofins" inputmode="decimal" placeholder="0,00"></div>
+{% endcall %}
+{% endblock %}

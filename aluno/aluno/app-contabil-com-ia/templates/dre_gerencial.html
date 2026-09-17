@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block head_extra %}<link rel="stylesheet" href="{{ url_for('static',filename='css/dre-gerencial.css') }}"><link rel="stylesheet" href="{{ url_for('static',filename='css/dre-niveis.css') }}">{% endblock %}
+{% from 'controle_escolha.html' import escolha %}
+{% from 'modal_edicao.html' import modal with context %}
+{% block report_presentation %}{% endblock %}
+{% block top_actions %}
+<form method="get" action="{{ url_for('grupos_dre.demonstracao') }}" id="dre-filtros" class="dre-top-filters" aria-label="Período da DRE">
+  <div class="dre-year-control"><select id="ano" name="ano" aria-label="Ano">{% for item in anos %}<option value="{{ item }}" {{ 'selected' if item == ano }}>{{ item }}</option>{% endfor %}</select></div>
+  {{ escolha('visao','Visão',visao,[('mensal','Mensal','ph-calendar'),('trimestral','Trimestral','ph-calendar-blank')]) }}
+  {% if base_av %}<input type="hidden" name="base_av" value="{{ base_av }}">{% endif %}
+  <noscript><button type="submit" class="btn btn-secondary">Consultar</button></noscript>
+</form>
+{% endblock %}
+{% macro numero(valor) %}{{ valor|money_num }}{% endmacro %}
+{% macro av(valor) %}<small class="muted">{{ ('%.1f%%'|format(valor))|replace('.', ',') if valor is not none else '—' }}</small>{% endmacro %}
+{% set origens_nome={'realizado':'Realizado','orcado':'Orçado','misto':'Realizado + Orçado'} %}
+{% block content %}
+{% if estrutura_vazia %}
+<section class="card"><h2>Configure a DRE gerencial</h2><p>Cadastre os grupos e vínculos que apresentam suas contas antes de consultar este relatório.</p><a class="btn btn-primary" href="{{ url_for('grupos_dre.cadastro') }}">Configurar estrutura</a></section>
+{% else %}
+<p class="intro">Realizado até {{ corte[5:7] }}/{{ corte[:4] }}, último mês importado. Após esse corte, a DRE usa o orçamento até dezembro do ano consultado.</p>
+<section class="table-card statement" id="dre-quadro">
+  <header class="section-head"><div class="dre-table-heading"><h2>DRE gerencial · {{ ano }}</h2>{% if base_av_nome %}<small class="muted">AV sobre {{ base_av_nome }}</small>{% endif %}</div><div class="tabela-acoes">{% with report_compact=true %}{% include 'apresentacao_relatorios.html' %}{% endwith %}</div></header>
+  {% if subtotais %}<template data-dre-av-options>{% for subtotal in subtotais %}<button type="button" class="ta-option ta-av-option" role="menuitemradio" data-av-base="{{ subtotal.codigo }}" aria-checked="{{ 'true' if subtotal.codigo == base_av else 'false' }}"><span>{{ subtotal.nome }}</span>{% if subtotal.codigo == base_av %}<i class="ph ph-check" aria-hidden="true"></i>{% endif %}</button>{% endfor %}</template>{% endif %}
+  {% if quadro.meses_sem_orcamento %}<p class="dre-missing">Sem orçamento em {{ quadro.meses_sem_orcamento|map('replace',ano ~ '-','')|join(', ') }}/{{ ano }}. O total considera somente os valores disponíveis. {% if modulo_disponivel('orcamento') %}<a href="/orcamento?competencia={{ ano }}-12">Cadastrar orçamento</a>{% endif %}</p>{% endif %}
+  <div class="table-scroll"><table id="dre-gerencial-arvore" data-tree="true" data-tree-depth="2" data-dre-hierarchy="true" data-persist-tree="true" data-tree-layout="{{ editor_niveis|selectattr('selecionado')|map(attribute='chave')|join(',') }}">
+    <thead><tr><th data-col-key="grupo">Grupo, conta ou centro</th>{% for mes in quadro.periodos %}<th data-col-key="{{ mes }}" class="numeric">{{ mes if visao == 'trimestral' else mes[5:7] ~ '/' ~ mes[:4] }}<br><small class="dre-source source-{{ quadro.origens[mes] }}">{{ origens_nome[quadro.origens[mes]] }}</small><small><span data-report-unit>{{ 'R$ mil' if report_format.mil else 'R$' }}</span> · AV</small></th>{% endfor %}<th data-col-key="acumulado" class="numeric">Total do ano<br><small class="dre-source {{ 'source-orcado' if quadro.tem_orcado else 'source-realizado' }}">{{ 'Forecast' if quadro.tem_orcado else 'Realizado' }}</small><small><span data-report-unit>{{ 'R$ mil' if report_format.mil else 'R$' }}</span> · AV</small></th><th data-col-key="anterior" class="numeric">{{ ano|int - 1 }}<br><small class="dre-source source-realizado">Realizado</small><small><span data-report-unit>{{ 'R$ mil' if report_format.mil else 'R$' }}</span> · AV</small></th></tr></thead>
+    <tbody>{% for linha in quadro.arvore.linhas %}<tr class="{{ 'row-subtotal' if linha.tipo == 'subtotal' else '' }}" data-node-id="{{ linha.node_id }}" data-parent-id="{{ linha.parent_id }}" data-level="{{ linha.nivel }}">
+      <td><div class="tree-cell tree-level-{{ linha.nivel }}">{% if linha.tem_filhos %}<button type="button" class="tree-toggle" data-tree-toggle aria-expanded="true" aria-label="Recolher {{ linha.nome }}"><i class="ph ph-caret-down"></i></button>{% else %}<span class="tree-spacer" aria-hidden="true"></span>{% endif %}
+      {% if modulo_disponivel('razao') and linha.conta_id and (linha.centro_id is not defined or linha.centro_id) %}<a title="Conferir lançamentos realizados" href="{{ url_for('pages.screen',active='razao',competencia=competencia,alcance='acumulado',conta=linha.conta_id,**({'centro':linha.centro_id} if linha.centro_id is defined else {})) }}">{{ linha.nome }}</a>{% else %}<span>{{ linha.nome }}</span>{% endif %}</div></td>
+      {% for mes in quadro.periodos %}<td class="numeric"><div>{% if modulo_disponivel('orcamento') and quadro.origens[mes]=='orcado' and linha.valores[mes] is not none and linha.conta_id %}<a title="Conferir valores orçados" href="/orcamento?competencia={{ mes if visao=='mensal' else ano ~ '-12' }}">{{ numero(linha.valores[mes]) }}</a>{% else %}{{ numero(linha.valores[mes]) }}{% endif %}</div>{{ av(linha.av_valores[mes]) }}</td>{% endfor %}
+      <td class="numeric"><div>{{ numero(linha.acumulado_centavos) }}</div>{{ av(linha.av_percentual) }}</td><td class="numeric"><div>{{ numero(linha.ano_anterior_centavos) }}</div>{{ av(linha.av_ano_anterior_percentual) }}</td>
+    </tr>{% endfor %}</tbody>
+  </table></div>
+  <footer class="dre-footer"><strong>Resultado total disponível</strong><strong data-dre-total>{{ numero(quadro.total_centavos) }}</strong><span class="muted">Ano anterior realizado: {{ numero(quadro.ano_anterior_centavos) }}</span></footer>
+</section>
+{% if quadro.nao_classificadas %}<p class="notice">Há valores em <strong>ZZ - SEM REGRA</strong>, no final do quadro. Eles entram no resultado total disponível, mas não nos subtotais das linhas classificadas. Defina os destinos em <a href="/contas">Contas</a> e <a href="/centros">Centros de custo</a>.</p>{% endif %}
+{% call modal('dre-niveis-modal','Selecionar níveis',url_for('grupos_dre.salvar_niveis'),salvar='Aplicar níveis') %}
+{% include 'niveis_relatorio.html' %}
+{% endcall %}
+{% endif %}
+{% endblock %}
+{% block scripts_extra %}<script src="{{ url_for('static',filename='js/dre-niveis.js') }}" defer></script><script src="{{ url_for('static',filename='js/dre-filtros.js') }}" defer></script>{% endblock %}

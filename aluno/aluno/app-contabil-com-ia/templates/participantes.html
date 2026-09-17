@@ -1,0 +1,28 @@
+{% extends 'base.html' %}{% from 'modal_edicao.html' import modal with context %}
+{% block top_actions %}<button type="button" class="btn btn-primary" data-create-modal="criar-participante"><i class="ph ph-plus" aria-hidden="true"></i> Criar participante</button>{% endblock %}
+{% block content %}<p class="intro">Clientes e fornecedores cadastrados. O documento é validado com dígito verificador; sem documento, o nome é a chave do cadastro.</p>
+<form class="conc-search" method="get" action="/participantes">
+  <input type="search" name="q" value="{{ q }}" placeholder="Buscar por nome ou documento…" aria-label="Buscar participante">
+  <button class="btn btn-secondary" type="submit">Buscar</button>
+</form>
+{% if rows %}<section class="table-card"><header class="section-head"><h2>{{ rows|length }} participante(s)</h2></header><div class="table-scroll"><table><thead><tr><th>Nome</th><th>Documento</th><th>Tipo</th><th>Ações</th></tr></thead><tbody>{% for p in rows %}<tr><td>{{ p.nome }}</td><td>{{ p.documento or '—' }}</td><td>{{ tipos[p.tipo] }}</td><td><button type="button" class="btn btn-secondary" data-edit-modal="editar-participante" data-record='{{ {"chave_original": p.chave, "nome": p.nome, "documento": p.documento, "tipo": p.tipo, "ie": p.ie, "uf": p.uf, "cod_mun": p.cod_mun}|tojson }}'>Editar</button></td></tr>{% endfor %}</tbody></table></div></section>
+{% else %}<section class="table-card"><div class="conc-no-results">{% if q %}Nenhum participante encontrado para "{{ q }}".{% else %}Nenhum participante cadastrado ainda. Use <strong>Criar participante</strong> no topo.{% endif %}</div></section>{% endif %}
+{% call modal('editar-participante','Editar participante','/participantes') %}
+<input type="hidden" name="chave_original" value="">
+<div class="field"><label for="part-edit-nome">Nome</label><input id="part-edit-nome" name="nome" required maxlength="200"></div>
+<div class="field"><label for="part-edit-documento">CNPJ ou CPF</label><input id="part-edit-documento" name="documento" maxlength="18" placeholder="00.000.000/0000-00 ou 000.000.000-00"></div>
+<div class="field"><label for="part-edit-tipo">Tipo</label><select id="part-edit-tipo" name="tipo" required>{% for chave, rotulo in tipos.items() %}<option value="{{ chave }}">{{ rotulo }}</option>{% endfor %}</select></div>
+<div class="field"><label for="part-edit-ie">Inscrição estadual</label><input id="part-edit-ie" name="ie" maxlength="20"></div>
+<div class="field"><label for="part-edit-uf">UF</label><input id="part-edit-uf" name="uf" maxlength="2" placeholder="SP"></div>
+<div class="field"><label for="part-edit-codmun">Código IBGE do município</label><input id="part-edit-codmun" name="cod_mun" maxlength="7" placeholder="3550308"></div>
+{% endcall %}
+{% call modal('criar-participante','Criar participante','/participantes',criar=true,salvar='Criar participante') %}
+<input type="hidden" name="operacao" value="criar">
+<div class="field"><label for="part-criar-nome">Nome</label><input id="part-criar-nome" name="nome" required maxlength="200"></div>
+<div class="field"><label for="part-criar-documento">CNPJ ou CPF</label><input id="part-criar-documento" name="documento" maxlength="18" placeholder="00.000.000/0000-00 ou 000.000.000-00"></div>
+<div class="field"><label for="part-criar-tipo">Tipo</label><select id="part-criar-tipo" name="tipo" required>{% for chave, rotulo in tipos.items() %}<option value="{{ chave }}">{{ rotulo }}</option>{% endfor %}</select></div>
+<div class="field"><label for="part-criar-ie">Inscrição estadual</label><input id="part-criar-ie" name="ie" maxlength="20"></div>
+<div class="field"><label for="part-criar-uf">UF</label><input id="part-criar-uf" name="uf" maxlength="2" placeholder="SP"></div>
+<div class="field"><label for="part-criar-codmun">Código IBGE do município</label><input id="part-criar-codmun" name="cod_mun" maxlength="7" placeholder="3550308"></div>
+{% endcall %}
+{% endblock %}

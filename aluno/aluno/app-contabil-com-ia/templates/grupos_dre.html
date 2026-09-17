@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block page_title %}{{ title }}{% endblock %}
+{% block top_actions %}
+{% if not grupos %}<form method="post" action="{{ url_for('grupos_dre.usar_referencia') }}"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-secondary" type="submit">Usar estrutura de referência</button></form>{% endif %}
+<button type="button" class="btn btn-primary" data-create-modal="criar-grupo"><i class="ph ph-plus" aria-hidden="true"></i> Criar Grupo</button>
+{% endblock %}
+{% from 'estado_vazio.html' import vazio %}
+{% block content %}
+<p class="intro">Organize as linhas e subtotais da DRE gerencial. Os destinos são definidos nos cadastros de contas e centros de custo.</p>
+
+
+
+
+{% if grupos %}<section class="table-card"><header class="section-head"><h2>Linhas da DRE</h2><span class="muted">Subtotal soma os detalhes anteriores classificados.</span></header><div class="table-scroll"><table><thead><tr><th>Código</th><th>Nome</th><th>Ordem</th><th>Tipo</th><th>Ações</th></tr></thead><tbody>{% for grupo in grupos %}<tr><td>{{ grupo.codigo }}</td><td>{{ grupo.nome }}</td><td>{{ grupo.ordem }}</td><td>{{ grupo.tipo }}</td><td><div class="record-actions"><button type="button" class="btn btn-secondary" data-edit-modal="editar-grupo" data-record='{{ grupo|tojson }}' data-edit-action="{{ url_for('grupos_dre.editar_grupo',codigo=grupo.codigo) }}">Editar</button><form method="post" action="/grupos-dre/grupo/{{ grupo.codigo }}/excluir"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-secondary" type="submit">Excluir grupo</button></form></div></td></tr>{% else %}<tr><td colspan="5" class="muted">Nenhum grupo cadastrado.</td></tr>{% endfor %}</tbody></table></div></section>{% else %}{{ vazio("Nenhum Grupo Cadastrado","Use Criar Grupo no topo para organizar a apresentação da DRE.") }}{% endif %}
+
+
+
+<section class="card"><h2>ZZ - SEM REGRA</h2><p>Linha automática no final do relatório. Recebe valores cuja conta não tem destino ou delega a um centro sem linha definida. Esses valores continuam no resultado total disponível.</p><div class="record-actions"><a class="btn btn-secondary" href="/contas">Cadastrar destinos nas contas</a><a class="btn btn-secondary" href="/centros">Cadastrar destinos nos centros</a></div></section>
+{% from 'modal_edicao.html' import modal with context %}
+{% call modal('editar-grupo','Editar grupo da DRE','/grupos-dre/grupo') %}
+<div class="field"><label for="grupo-edit-codigo">Código</label><input id="grupo-edit-codigo" name="codigo" readonly required></div>
+<div class="field"><label for="grupo-edit-ordem">Ordem</label><input id="grupo-edit-ordem" name="ordem" type="number" min="1" max="99999" required></div>
+<div class="field grow"><label for="grupo-edit-nome">Nome</label><input id="grupo-edit-nome" name="nome" required maxlength="120"></div>
+<div class="field"><label for="grupo-edit-tipo">Tipo</label><select id="grupo-edit-tipo" name="tipo" required><option value="detalhe">Detalhe</option><option value="subtotal">Subtotal</option></select></div>
+{% endcall %}
+{% call modal('criar-grupo','Criar Grupo','/grupos-dre/grupo',criar=true,salvar='Criar Grupo') %}
+<div class="field"><label for="novo-grupo-codigo">Código</label><input id="novo-grupo-codigo" name="codigo" required pattern="[a-z0-9][a-z0-9_.-]{0,63}" placeholder="receita_bruta"></div>
+<div class="field"><label for="novo-grupo-ordem">Ordem</label><input id="novo-grupo-ordem" name="ordem" type="number" min="1" max="99999" required></div>
+<div class="field grow"><label for="novo-grupo-nome">Nome</label><input id="novo-grupo-nome" name="nome" required maxlength="120" placeholder="Receita bruta"></div>
+<div class="field"><label for="novo-grupo-tipo">Tipo</label><select id="novo-grupo-tipo" name="tipo" required><option value="detalhe">Detalhe</option><option value="subtotal">Subtotal</option></select></div>
+{% endcall %}
+{% endblock %}

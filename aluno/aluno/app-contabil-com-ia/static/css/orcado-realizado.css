@@ -1,0 +1,30 @@
+#orcamento-quadro table{width:max-content;min-width:100%;border-collapse:separate;border-spacing:0}
+#orcamento-quadro th.numeric,#orcamento-quadro td.numeric{min-width:96px;font-size:12px;padding:12px 14px}
+#orcamento-quadro .budget-month{text-align:center;border-left:1px solid var(--border);padding:12px 14px 8px;color:var(--accent-soft)}
+#orcamento-quadro .budget-month-start,#orcamento-quadro td.budget-o{border-left:1px solid var(--border)}
+#orcamento-quadro .budget-o{color:var(--accent-soft)}
+#orcamento-quadro .budget-delta small{display:block;margin-top:3px;font-size:10px;opacity:.8}
+#orcamento-quadro thead tr[data-column-headers] th{position:static}
+#orcamento-quadro thead th[rowspan]{vertical-align:middle}
+#orcamento-quadro tr>td:first-child,#orcamento-quadro thead tr:first-child>th:first-child{min-width:300px;max-width:420px}
+#orcamento-quadro tr.row-subtotal td{font-weight:700}
+#orcamento-quadro tbody td:first-child{overflow:hidden}
+#orcamento-quadro .tree-cell{width:100%;overflow:hidden}
+#orcamento-quadro .tree-cell>a,#orcamento-quadro .tree-cell>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis}
+#orcamento-quadro .tree-toggle,#orcamento-quadro .tree-spacer{flex-shrink:0}
+#orcamento-quadro tr.row-subtotal td.budget-delta-good{color:var(--success,#65c999)}
+#orcamento-quadro tr.row-subtotal td.budget-delta-bad{color:var(--danger,#f18a8a)}
+#orcamento-quadro .section-head{gap:20px;flex-wrap:wrap}
+.budget-caption{font-size:12px;color:var(--muted);line-height:1.6}
+@media(max-width:650px){#orcamento-quadro .tabela-acoes{flex-wrap:wrap;justify-content:flex-end;width:100%}#orcamento-quadro tr>td:first-child,#orcamento-quadro thead tr:first-child>th:first-child{min-width:220px;max-width:220px}#orcamento-quadro .report-options{gap:12px}.topbar:has([aria-label="Visão do orçamento"]){flex-wrap:wrap;height:auto;gap:12px}.topbar:has([aria-label="Visão do orçamento"]) .topbar-actions{flex-wrap:wrap}}
+
+/* Decisão031: um quadro por mês, O/R acima e variação abaixo. */
+#orcamento-quadro th.budget-month,#orcamento-quadro td.budget-month-cell{min-width:186px;padding:10px 16px;border-left:1px solid var(--border)}
+#orcamento-quadro .budget-values,#orcamento-quadro .budget-value-heads{display:grid;grid-template-columns:1fr 1fr;gap:14px;text-align:right}
+#orcamento-quadro .budget-month-title{text-align:center;margin-bottom:10px;color:var(--accent-soft)}
+#orcamento-quadro .budget-value-heads{color:var(--muted);font-size:10px}
+#orcamento-quadro .budget-variance{position:relative;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:6px;font-size:10px;font-weight:500;line-height:1.2;color:var(--muted)}
+#orcamento-quadro .budget-variance i{font-size:13px}
+#orcamento-quadro .budget-variance.budget-delta-good{color:#6ee7a0}
+#orcamento-quadro .budget-variance.budget-delta-bad{color:#ff9c92}
+#orcamento-quadro .budget-variance [data-export-field="Variação %"]{margin-left:3px}

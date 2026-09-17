@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block content %}<p class="intro">Use no mínimo 8 caracteres, combinando letras e números. Você permanece logado após a troca.</p>
+<section class="card form-card">
+  <form method="post" action="/minha-senha">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <label>Senha atual<input name="atual" type="password" required autocomplete="current-password"></label>
+    <label>Nova senha<input name="nova" type="password" required minlength="8" autocomplete="new-password" placeholder="8+ caracteres, letras e números"></label>
+    <label>Confirmar nova senha<input name="confirmar" type="password" required minlength="8" autocomplete="new-password"></label>
+    <div class="form-actions"><button class="btn btn-primary" type="submit">Alterar minha senha</button></div>
+  </form>
+</section>
+{% endblock %}

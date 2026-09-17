@@ -1,0 +1,41 @@
+.home-page{display:flex;flex-direction:column;gap:var(--sp-5);width:100%;max-width:1160px;align-self:center;min-width:0}
+.home-page h2,.home-page h3,.home-page p{margin:0}
+.home-hero.card{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(290px,1fr);gap:var(--sp-6);padding:var(--sp-5);border-top:2px solid var(--accent)}
+.home-welcome{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:var(--sp-4);min-width:0}
+.home-welcome h2{font:700 clamp(25px,2.4vw,36px)/1.2 var(--font-title);letter-spacing:-.04em}
+.home-lead{max-width:540px;color:var(--muted);font-size:14px;line-height:1.6}
+.home-actions{display:flex;flex-wrap:wrap;gap:var(--sp-3)}
+.home-base{display:flex;flex-direction:column;gap:var(--sp-4);padding:var(--sp-5);border:1px solid var(--border);border-radius:var(--radius);background:var(--bg);min-width:0}
+.home-base-heading{display:flex;align-items:center;gap:var(--sp-2);color:var(--accent-soft)}
+.home-base-heading h3{font:600 13px var(--font-title);flex:1}
+.home-base-heading>a{display:grid;place-items:center;width:32px;height:32px;border-radius:var(--radius-sm);color:var(--muted)}
+.home-base-heading>a:hover{color:var(--accent);background:var(--surface)}
+.home-count{display:flex;align-items:baseline;flex-wrap:wrap;gap:var(--sp-2)}
+.home-count strong{font:700 30px var(--font-title);font-variant-numeric:tabular-nums}
+.home-count span{font-size:12px;color:var(--muted)}
+.home-status{display:flex;flex-direction:column;gap:var(--sp-3);margin:0;border-top:1px solid var(--border);padding-top:var(--sp-4);font-size:12px}
+.home-status>div{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-3)}
+.home-status dt{color:var(--muted)}
+.home-status dd{margin:0;text-align:right}
+.home-status a{display:inline-flex;align-items:center;gap:var(--sp-1);color:var(--accent-soft);text-decoration:underline;text-underline-offset:3px}
+.home-status a.home-ready{color:var(--success)}
+.home-status a.home-pending{color:var(--warning)}
+.home-workspace{display:flex;flex-direction:column;gap:var(--sp-4);min-width:0}
+.home-section-heading{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-3);flex-wrap:wrap}
+.home-section-heading h2{font:600 17px var(--font-title)}
+.home-section-heading span{color:var(--muted);font-size:12px}
+.home-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sp-4);align-items:stretch}
+.home-shortcut.card{padding:20px;gap:var(--sp-3);height:100%;text-decoration:none;color:var(--text);transition:border-color .18s,box-shadow .18s,transform .18s}
+.home-shortcut:hover{border-color:var(--accent);box-shadow:var(--shadow);transform:translateY(-2px)}
+.home-page a:focus-visible{outline:2px solid var(--accent);outline-offset:4px}
+.home-shortcut-top{display:flex;align-items:center;gap:var(--sp-3)}
+.home-icon{display:grid;place-items:center;width:38px;height:38px;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--accent);font-size:21px}
+.home-step{font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--muted);flex:1}
+.home-shortcut-arrow{color:var(--muted);font-size:17px}
+.home-shortcut h3{font:600 15px var(--font-title)}
+.home-shortcut p{font-size:13px;line-height:1.55;color:var(--muted)}
+.home-shortcut-ai .home-icon{color:var(--accent-soft);border-color:var(--accent-soft)}
+.home-note{display:flex;align-items:center;justify-content:center;gap:var(--sp-2);font-size:12px;color:var(--muted);text-align:center}
+@media(max-width:1050px){.home-hero.card{grid-template-columns:1fr;gap:var(--sp-5)}.home-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.home-base{padding:var(--sp-4)}}
+@media(max-width:620px){.home-hero.card{padding:var(--sp-4)}.home-grid{grid-template-columns:1fr}.home-actions{width:100%;flex-direction:column}.home-actions .btn{justify-content:center}.home-status>div{flex-wrap:wrap;gap:var(--sp-1)}.home-status dd{text-align:left}.home-section-heading span{display:none}.home-note{align-items:flex-start}}
+@media(prefers-reduced-motion:reduce){.home-shortcut.card{transition:none}.home-shortcut:hover{transform:none}}

@@ -1,0 +1,866 @@
+[
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-01",
+    "conta_id": "31101001",
+    "valor_dc_centavos": -6620000,
+    "premissa_id": "ORC-4.1",
+    "centro_id": ""
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-01",
+    "conta_id": "31201001",
+    "valor_dc_centavos": 400000,
+    "premissa_id": "ORC-5.1",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-01",
+    "conta_id": "33101001",
+    "valor_dc_centavos": 950000,
+    "premissa_id": "ORC-5.2",
+    "centro_id": "OPERACAO"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-01",
+    "conta_id": "34101001",
+    "valor_dc_centavos": 2300000,
+    "premissa_id": "ORC-5.3",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-01",
+    "conta_id": "34102001",
+    "valor_dc_centavos": 600000,
+    "premissa_id": "ORC-5.4",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-01",
+    "conta_id": "34103001",
+    "valor_dc_centavos": 100000,
+    "premissa_id": "ORC-5.5",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-01",
+    "conta_id": "35101001",
+    "valor_dc_centavos": 12000,
+    "premissa_id": "ORC-5.6",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-01",
+    "conta_id": "36101001",
+    "valor_dc_centavos": 250000,
+    "premissa_id": "ORC-5.7",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-02",
+    "conta_id": "31101001",
+    "valor_dc_centavos": -6740000,
+    "premissa_id": "ORC-4.1",
+    "centro_id": ""
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-02",
+    "conta_id": "31201001",
+    "valor_dc_centavos": 400000,
+    "premissa_id": "ORC-5.1",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-02",
+    "conta_id": "33101001",
+    "valor_dc_centavos": 950000,
+    "premissa_id": "ORC-5.2",
+    "centro_id": "OPERACAO"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-02",
+    "conta_id": "34101001",
+    "valor_dc_centavos": 2300000,
+    "premissa_id": "ORC-5.3",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-02",
+    "conta_id": "34102001",
+    "valor_dc_centavos": 600000,
+    "premissa_id": "ORC-5.4",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-02",
+    "conta_id": "34103001",
+    "valor_dc_centavos": 100000,
+    "premissa_id": "ORC-5.5",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-02",
+    "conta_id": "35101001",
+    "valor_dc_centavos": 12000,
+    "premissa_id": "ORC-5.6",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-02",
+    "conta_id": "36101001",
+    "valor_dc_centavos": 250000,
+    "premissa_id": "ORC-5.7",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-03",
+    "conta_id": "31101001",
+    "valor_dc_centavos": -6860000,
+    "premissa_id": "ORC-4.1",
+    "centro_id": ""
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-03",
+    "conta_id": "31201001",
+    "valor_dc_centavos": 400000,
+    "premissa_id": "ORC-5.1",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-03",
+    "conta_id": "33101001",
+    "valor_dc_centavos": 950000,
+    "premissa_id": "ORC-5.2",
+    "centro_id": "OPERACAO"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-03",
+    "conta_id": "34101001",
+    "valor_dc_centavos": 2300000,
+    "premissa_id": "ORC-5.3",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-03",
+    "conta_id": "34102001",
+    "valor_dc_centavos": 600000,
+    "premissa_id": "ORC-5.4",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-03",
+    "conta_id": "34103001",
+    "valor_dc_centavos": 100000,
+    "premissa_id": "ORC-5.5",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-03",
+    "conta_id": "35101001",
+    "valor_dc_centavos": 12000,
+    "premissa_id": "ORC-5.6",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-03",
+    "conta_id": "36101001",
+    "valor_dc_centavos": 250000,
+    "premissa_id": "ORC-5.7",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-04",
+    "conta_id": "31101001",
+    "valor_dc_centavos": -6980000,
+    "premissa_id": "ORC-4.1",
+    "centro_id": ""
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-04",
+    "conta_id": "31201001",
+    "valor_dc_centavos": 400000,
+    "premissa_id": "ORC-5.1",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-04",
+    "conta_id": "33101001",
+    "valor_dc_centavos": 950000,
+    "premissa_id": "ORC-5.2",
+    "centro_id": "OPERACAO"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-04",
+    "conta_id": "34101001",
+    "valor_dc_centavos": 2300000,
+    "premissa_id": "ORC-5.3",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-04",
+    "conta_id": "34102001",
+    "valor_dc_centavos": 600000,
+    "premissa_id": "ORC-5.4",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-04",
+    "conta_id": "34103001",
+    "valor_dc_centavos": 100000,
+    "premissa_id": "ORC-5.5",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-04",
+    "conta_id": "35101001",
+    "valor_dc_centavos": 12000,
+    "premissa_id": "ORC-5.6",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-04",
+    "conta_id": "36101001",
+    "valor_dc_centavos": 250000,
+    "premissa_id": "ORC-5.7",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-05",
+    "conta_id": "31101001",
+    "valor_dc_centavos": -7100000,
+    "premissa_id": "ORC-4.1",
+    "centro_id": ""
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-05",
+    "conta_id": "31201001",
+    "valor_dc_centavos": 400000,
+    "premissa_id": "ORC-5.1",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-05",
+    "conta_id": "33101001",
+    "valor_dc_centavos": 950000,
+    "premissa_id": "ORC-5.2",
+    "centro_id": "OPERACAO"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-05",
+    "conta_id": "34101001",
+    "valor_dc_centavos": 2300000,
+    "premissa_id": "ORC-5.3",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-05",
+    "conta_id": "34102001",
+    "valor_dc_centavos": 600000,
+    "premissa_id": "ORC-5.4",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-05",
+    "conta_id": "34103001",
+    "valor_dc_centavos": 100000,
+    "premissa_id": "ORC-5.5",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-05",
+    "conta_id": "35101001",
+    "valor_dc_centavos": 12000,
+    "premissa_id": "ORC-5.6",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-05",
+    "conta_id": "36101001",
+    "valor_dc_centavos": 250000,
+    "premissa_id": "ORC-5.7",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-06",
+    "conta_id": "31101001",
+    "valor_dc_centavos": -7220000,
+    "premissa_id": "ORC-4.1",
+    "centro_id": ""
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-06",
+    "conta_id": "31201001",
+    "valor_dc_centavos": 400000,
+    "premissa_id": "ORC-5.1",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-06",
+    "conta_id": "33101001",
+    "valor_dc_centavos": 950000,
+    "premissa_id": "ORC-5.2",
+    "centro_id": "OPERACAO"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-06",
+    "conta_id": "34101001",
+    "valor_dc_centavos": 2300000,
+    "premissa_id": "ORC-5.3",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-06",
+    "conta_id": "34102001",
+    "valor_dc_centavos": 600000,
+    "premissa_id": "ORC-5.4",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-06",
+    "conta_id": "34103001",
+    "valor_dc_centavos": 100000,
+    "premissa_id": "ORC-5.5",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-06",
+    "conta_id": "35101001",
+    "valor_dc_centavos": 12000,
+    "premissa_id": "ORC-5.6",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-06",
+    "conta_id": "36101001",
+    "valor_dc_centavos": 250000,
+    "premissa_id": "ORC-5.7",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-07",
+    "conta_id": "31101001",
+    "valor_dc_centavos": -7340000,
+    "premissa_id": "ORC-4.1",
+    "centro_id": ""
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-07",
+    "conta_id": "31201001",
+    "valor_dc_centavos": 400000,
+    "premissa_id": "ORC-5.1",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-07",
+    "conta_id": "33101001",
+    "valor_dc_centavos": 950000,
+    "premissa_id": "ORC-5.2",
+    "centro_id": "OPERACAO"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-07",
+    "conta_id": "34101001",
+    "valor_dc_centavos": 2300000,
+    "premissa_id": "ORC-5.3",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-07",
+    "conta_id": "34102001",
+    "valor_dc_centavos": 600000,
+    "premissa_id": "ORC-5.4",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-07",
+    "conta_id": "34103001",
+    "valor_dc_centavos": 100000,
+    "premissa_id": "ORC-5.5",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-07",
+    "conta_id": "35101001",
+    "valor_dc_centavos": 12000,
+    "premissa_id": "ORC-5.6",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-07",
+    "conta_id": "36101001",
+    "valor_dc_centavos": 250000,
+    "premissa_id": "ORC-5.7",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-08",
+    "conta_id": "31101001",
+    "valor_dc_centavos": -7460000,
+    "premissa_id": "ORC-4.1",
+    "centro_id": ""
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-08",
+    "conta_id": "31201001",
+    "valor_dc_centavos": 400000,
+    "premissa_id": "ORC-5.1",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-08",
+    "conta_id": "33101001",
+    "valor_dc_centavos": 950000,
+    "premissa_id": "ORC-5.2",
+    "centro_id": "OPERACAO"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-08",
+    "conta_id": "34101001",
+    "valor_dc_centavos": 2300000,
+    "premissa_id": "ORC-5.3",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-08",
+    "conta_id": "34102001",
+    "valor_dc_centavos": 600000,
+    "premissa_id": "ORC-5.4",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-08",
+    "conta_id": "34103001",
+    "valor_dc_centavos": 100000,
+    "premissa_id": "ORC-5.5",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-08",
+    "conta_id": "35101001",
+    "valor_dc_centavos": 12000,
+    "premissa_id": "ORC-5.6",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-08",
+    "conta_id": "36101001",
+    "valor_dc_centavos": 250000,
+    "premissa_id": "ORC-5.7",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-09",
+    "conta_id": "31101001",
+    "valor_dc_centavos": -7580000,
+    "premissa_id": "ORC-4.1",
+    "centro_id": ""
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-09",
+    "conta_id": "31201001",
+    "valor_dc_centavos": 400000,
+    "premissa_id": "ORC-5.1",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-09",
+    "conta_id": "33101001",
+    "valor_dc_centavos": 950000,
+    "premissa_id": "ORC-5.2",
+    "centro_id": "OPERACAO"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-09",
+    "conta_id": "34101001",
+    "valor_dc_centavos": 2300000,
+    "premissa_id": "ORC-5.3",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-09",
+    "conta_id": "34102001",
+    "valor_dc_centavos": 600000,
+    "premissa_id": "ORC-5.4",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-09",
+    "conta_id": "34103001",
+    "valor_dc_centavos": 100000,
+    "premissa_id": "ORC-5.5",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-09",
+    "conta_id": "35101001",
+    "valor_dc_centavos": 12000,
+    "premissa_id": "ORC-5.6",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-09",
+    "conta_id": "36101001",
+    "valor_dc_centavos": 250000,
+    "premissa_id": "ORC-5.7",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-10",
+    "conta_id": "31101001",
+    "valor_dc_centavos": -7700000,
+    "premissa_id": "ORC-4.1",
+    "centro_id": ""
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-10",
+    "conta_id": "31201001",
+    "valor_dc_centavos": 400000,
+    "premissa_id": "ORC-5.1",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-10",
+    "conta_id": "33101001",
+    "valor_dc_centavos": 950000,
+    "premissa_id": "ORC-5.2",
+    "centro_id": "OPERACAO"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-10",
+    "conta_id": "34101001",
+    "valor_dc_centavos": 2300000,
+    "premissa_id": "ORC-5.3",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-10",
+    "conta_id": "34102001",
+    "valor_dc_centavos": 600000,
+    "premissa_id": "ORC-5.4",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-10",
+    "conta_id": "34103001",
+    "valor_dc_centavos": 100000,
+    "premissa_id": "ORC-5.5",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-10",
+    "conta_id": "35101001",
+    "valor_dc_centavos": 12000,
+    "premissa_id": "ORC-5.6",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-10",
+    "conta_id": "36101001",
+    "valor_dc_centavos": 250000,
+    "premissa_id": "ORC-5.7",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-11",
+    "conta_id": "31101001",
+    "valor_dc_centavos": -7820000,
+    "premissa_id": "ORC-4.1",
+    "centro_id": ""
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-11",
+    "conta_id": "31201001",
+    "valor_dc_centavos": 400000,
+    "premissa_id": "ORC-5.1",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-11",
+    "conta_id": "33101001",
+    "valor_dc_centavos": 950000,
+    "premissa_id": "ORC-5.2",
+    "centro_id": "OPERACAO"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-11",
+    "conta_id": "34101001",
+    "valor_dc_centavos": 2300000,
+    "premissa_id": "ORC-5.3",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-11",
+    "conta_id": "34102001",
+    "valor_dc_centavos": 600000,
+    "premissa_id": "ORC-5.4",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-11",
+    "conta_id": "34103001",
+    "valor_dc_centavos": 100000,
+    "premissa_id": "ORC-5.5",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-11",
+    "conta_id": "35101001",
+    "valor_dc_centavos": 12000,
+    "premissa_id": "ORC-5.6",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-11",
+    "conta_id": "36101001",
+    "valor_dc_centavos": 250000,
+    "premissa_id": "ORC-5.7",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-12",
+    "conta_id": "31101001",
+    "valor_dc_centavos": -7940000,
+    "premissa_id": "ORC-4.1",
+    "centro_id": ""
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-12",
+    "conta_id": "31201001",
+    "valor_dc_centavos": 400000,
+    "premissa_id": "ORC-5.1",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-12",
+    "conta_id": "33101001",
+    "valor_dc_centavos": 950000,
+    "premissa_id": "ORC-5.2",
+    "centro_id": "OPERACAO"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-12",
+    "conta_id": "34101001",
+    "valor_dc_centavos": 2300000,
+    "premissa_id": "ORC-5.3",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-12",
+    "conta_id": "34102001",
+    "valor_dc_centavos": 600000,
+    "premissa_id": "ORC-5.4",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-12",
+    "conta_id": "34103001",
+    "valor_dc_centavos": 100000,
+    "premissa_id": "ORC-5.5",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-12",
+    "conta_id": "35101001",
+    "valor_dc_centavos": 12000,
+    "premissa_id": "ORC-5.6",
+    "centro_id": "ADMIN"
+  },
+  {
+    "empresa_id": "EMPRESA_WORKSHOP_01",
+    "versao": "ORC_2026_BASE",
+    "competencia": "2026-12",
+    "conta_id": "36101001",
+    "valor_dc_centavos": 250000,
+    "premissa_id": "ORC-5.7",
+    "centro_id": "ADMIN"
+  }
+]

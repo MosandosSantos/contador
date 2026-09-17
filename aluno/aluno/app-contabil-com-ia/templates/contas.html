@@ -1,0 +1,26 @@
+{% extends 'base.html' %}{% block top_actions %}<a class="btn btn-secondary" href="/exportar/ecd">Exportar ECD (rascunho)</a><button type="button" class="btn btn-secondary" data-create-modal="modal-referencial">Importar referencial (0500)</button>{% if not edit %}<button type="button" class="btn btn-primary" data-create-modal="criar-conta"><i class="ph ph-plus" aria-hidden="true"></i> Criar conta</button>{% endif %}{% endblock %}
+{% from 'linha_dre_cadastro.html' import nome_destino with context %}{% from 'estado_vazio.html' import vazio %}{% from 'arvore_macros.html' import rotulo %}
+{% block content %}<p class="intro">Defina a hierarquia e a natureza das contas. A classificação organiza os relatórios e preserva a escrituração importada.</p>
+<div class="plan-summary"><span><strong>{{ sinteticas }}</strong> sintéticas</span><span><strong>{{ analiticas }}</strong> analíticas</span><span><strong>{{ max_nivel }}</strong> níveis</span></div>
+{% from 'modal_edicao.html' import modal with context %}
+{% if edit %}
+{% call modal('editar-conta', 'Editar conta ' ~ edit.conta_id, '/contas', 'modal-lg', true, '/contas') %}{% include 'conta_campos.html' %}{% endcall %}
+{% endif %}
+{% if not edit %}{% with edit={} %}{% call modal('criar-conta','Criar conta','/contas','modal-lg',criar=true,salvar='Criar conta') %}<input type="hidden" name="operacao" value="criar">{% include 'conta_campos.html' %}{% endcall %}{% endwith %}{% endif %}
+{% call modal('modal-referencial','Importar referencial (bloco 0500)','/contas/referencial','modal-md',criar=true,salvar='Importar',icone='ph-upload-simple') %}
+<p class="muted">Envie um CSV ou XLSX com as colunas <strong>conta</strong> e <strong>cod_referencial</strong>. Códigos em branco na planilha não alteram o cadastro.</p>
+<div class="modal-fields">
+<label for="ref-arquivo">Planilha (CSV ou XLSX)</label>
+<input type="file" id="ref-arquivo" name="arquivo" accept=".csv,.xlsx,.xlsm" required>
+</div>
+{% endcall %}
+{% if rows %}
+<section class="table-card"><header class="section-head"><h2>Árvore do plano de contas</h2><span class="muted">{{ rows|length }} contas na estrutura</span></header>
+<form class="table-search" method="get"><label class="sr-only" for="buscar-conta">Buscar código ou descrição</label><input id="buscar-conta" name="q" placeholder="Buscar código ou descrição" value="{{ getparam('q','') }}"><button class="btn btn-secondary" type="submit">Buscar</button><a class="btn btn-secondary" href="/contas?pendentes=1">Só pendentes</a><a href="/contas">Todas</a></form>
+<div class="table-scroll"><table id="plano-contas-arvore" data-tree="true" data-tree-depth="{{ 20 if getparam('q') or getparam('pendentes') else 2 }}">
+<thead><tr><th>Conta / descrição</th><th>Tipo</th><th class="numeric">Nível</th><th>Grupo</th><th>Classe</th><th>Componente</th><th>DRE referência</th><th>DRE gerencial</th><th>Ações</th></tr></thead>
+<tbody>{% for c in rows %}<tr data-node-id="{{ c.node_id }}" data-parent-id="{{ c.parent_id }}" data-level="{{ c.level }}" class="{{ 'row-subtotal' if not c.analitica }}">
+<td>{{ rotulo(c) }}</td><td>{{ 'Analítica' if c.analitica else 'Sintética' }}</td><td class="numeric">{{ c.nivel }}</td><td>{{ c.grupo }}</td><td>{{ c.classe_bp|replace('_',' ') }}</td><td>{{ componentes.get(c.componente,c.componente) }}</td><td>{{ linhas.get(c.linha_dre,c.linha_dre) }}</td><td>{{ nome_destino(c.dre_destino) if c.analitica and c.grupo=='resultado' else '—' }}</td><td><a class="btn btn-secondary" data-edit-url href="{{ url_for('cadastros.contas',editar=c.conta_id) }}">Editar</a></td></tr>{% endfor %}</tbody></table></div></section>
+{% else %}{{ vazio("Nenhuma Conta Encontrada","Importe o plano de contas ou use Criar conta no topo.") }}{% endif %}
+{% endblock %}
+{% block scripts_extra %}<script src="{{ url_for('static', filename='js/nivel-conta.js') }}" defer></script>{% endblock %}

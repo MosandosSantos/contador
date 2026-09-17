@@ -1,0 +1,6 @@
+{% macro rotulo(node, href=None) -%}
+<div class="tree-cell tree-level-{{ node.level }}">
+  {% if node.has_children %}<button type="button" class="tree-toggle" data-tree-toggle aria-expanded="true" aria-label="Recolher {{ node.descricao }}"><i class="ph ph-caret-down" aria-hidden="true"></i></button>{% else %}<span class="tree-spacer" aria-hidden="true"></span>{% endif %}
+  {% if href %}<a href="{{ href }}">{{ node.conta_id }} · {{ node.descricao }}</a>{% else %}<span>{{ node.conta_id }} · {{ node.descricao }}</span>{% endif %}
+</div>
+{%- endmacro %}

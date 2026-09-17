@@ -1,0 +1,10 @@
+{% macro modal(id, titulo, action, tamanho='modal-md', automatico=false, voltar='', criar=false, salvar='Salvar alterações', metodo='post', icone='ph-floppy-disk') %}
+<dialog id="{{ id }}" class="popup-centrado record-modal {{ tamanho }}" closedby="none" data-record-modal {% if criar %}data-create-form{% endif %} {% if automatico %}data-modal-auto{% endif %} data-return-url="{{ voltar }}" aria-labelledby="{{ id }}-titulo" aria-modal="true">
+  <header class="modal-cab"><h2 id="{{ id }}-titulo">{{ titulo }}</h2><button type="button" class="modal-x" data-modal-close aria-label="{{ 'Fechar cadastro' if criar else 'Fechar edição' }}"><i class="ph ph-x" aria-hidden="true"></i></button></header>
+  <form method="{{ metodo }}" action="{{ action }}" {% if metodo == 'post' %}data-modal-form novalidate{% endif %}>
+    {% if metodo == 'post' %}<input type="hidden" name="csrf_token" value="{{ csrf_token }}">{% endif %}
+    <div class="modal-corpo"><div class="notice notice-error modal-aviso" role="alert" hidden></div><div class="modal-fields">{{ caller() }}</div></div>
+    <footer class="modal-rodape"><button type="button" class="btn btn-secondary" data-modal-close>Cancelar</button><button type="submit" class="btn btn-primary"><i class="ph {{ icone }}" aria-hidden="true"></i> {{ salvar }}</button></footer>
+  </form>
+</dialog>
+{% endmacro %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block head_extra %}<link rel="stylesheet" href="{{ url_for('static', filename='css/relatorios-periodo.css') }}"><link rel="stylesheet" href="{{ url_for('static', filename='css/razao-secoes.css') }}">{% endblock %}
+{% block report_presentation %}{% endblock %}
+{% block top_actions %}{% include 'filtro_relatorio_botao.html' %}{% endblock %}
+{% block content %}
+<p class="intro">Lançamentos por conta, em ordem cronológica, de {{ data_de|data_br }} a {{ data_ate|data_br }}.</p>
+{% if razao.aviso_documento %}<p class="notice notice-info razao-documento-aviso">{{ razao.aviso_documento }}</p>{% endif %}
+<section class="table-card razao-head" id="razao-quadro">
+  <header class="section-head report-head-compact">
+    <div><h2>Razão contábil</h2><small class="muted">{{ data_de|data_br }} a {{ data_ate|data_br }} · <span data-report-unit>{{ 'R$ mil' if report_format.mil else 'R$' }}</span></small></div>
+    <div class="tabela-acoes">{% with report_compact=true %}{% include 'apresentacao_relatorios.html' %}{% endwith %}</div>
+  </header>
+</section>
+{% for secao in razao.secoes %}
+<section class="table-card razao-secao">
+  <header class="section-head">
+    <div><h2>{{ secao.codigo }} · {{ secao.descricao }}</h2><small class="muted">Saldo anterior: {{ secao.saldo_anterior|money_num }} · Débitos exibidos: {{ secao.debito|money_num }} · Créditos exibidos: {{ secao.credito|money_num }} · Saldo final: {{ secao.saldo_final|money_num }}</small></div>
+  </header>
+  <div class="table-scroll tab-scroll-table"><table data-locked-order="true" data-export-account="{{ secao.codigo }}"><thead><tr><th data-col-key="data" data-tipo="data">Data</th><th data-col-key="documento">Documento</th><th data-col-key="historico">Histórico</th><th data-col-key="centro">Centro</th><th class="numeric" data-col-key="debito" data-tipo="numero">Débito</th><th class="numeric" data-col-key="credito" data-tipo="numero">Crédito</th><th class="numeric" data-col-key="saldo" data-tipo="numero">Saldo acumulado</th></tr></thead>
+    <tbody>
+      <tr class="razao-saldo-anterior" data-export-opening="true"><td>{{ data_de|data_br }}</td><td></td><td>Saldo anterior</td><td>{{ razao.filtros.centro or '' }}</td><td class="numeric">{{ 0|money_num }}</td><td class="numeric">{{ 0|money_num }}</td><td class="numeric">{{ secao.saldo_anterior|money_num }}</td></tr>
+      {% for movimento in secao.movimentos %}<tr><td>{{ movimento.data|data_br }}</td><td><a href="{{ url_for('pages.screen',active='razao',conta=secao.codigo,documento=movimento.documento_id,data_de=data_de,data_ate=data_ate,**({'centro':centro_selecionado} if centro_selecionado is not none else {})) }}">{{ movimento.documento_id }}</a></td><td>{{ movimento.historico }}</td><td>{{ movimento.centro_id }}</td><td class="numeric">{{ movimento.debito_centavos|money_num }}</td><td class="numeric">{{ movimento.credito_centavos|money_num }}</td><td class="numeric">{{ movimento.saldo_centavos|money_num }}</td></tr>{% else %}<tr data-export-skip="true"><td colspan="7" class="muted">Nenhum lançamento exibido neste intervalo para esta conta.</td></tr>{% endfor %}
+      <tr class="razao-saldo-final" data-export-closing="true"><td>{{ data_ate|data_br }}</td><td></td><td>Saldo final</td><td>{{ razao.filtros.centro or '' }}</td><td class="numeric">{{ 0|money_num }}</td><td class="numeric">{{ 0|money_num }}</td><td class="numeric">{{ secao.saldo_final|money_num }}</td></tr>
+    </tbody>
+  </table></div>
+</section>
+{% else %}<div class="vz vz-inline"><i class="ph ph-tray vz-icone"></i><p class="vz-titulo">Nenhuma conta selecionada</p><p class="vz-sub">Abra Filtro para escolher uma ou mais contas.</p></div>{% endfor %}
+{% include 'filtro_relatorio_modal.html' %}
+{% endblock %}
+
+{% block scripts_extra %}<script src="{{ url_for('static',filename='js/filtro-relatorio.js') }}" defer></script>{% endblock %}

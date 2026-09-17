@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block page_title %}Conciliação{% endblock %}
+{% block head_extra %}<link rel="stylesheet" href="{{ url_for('static', filename='css/conciliacao.css') }}">{% endblock %}
+{% block top_actions %}{% if resultado %}<a class="btn btn-secondary" href="/conciliacao-arquivos"><i class="ph ph-upload-simple"></i> Trocar arquivos</a>{% endif %}{% endblock %}
+{% block content %}
+{% if not resultado %}
+<section class="conc-empty card"><i class="ph ph-arrows-left-right"></i><h2>Nenhuma conciliação carregada</h2><p>Envie a base contábil e a financeira para identificar o que bate e o que precisa de tratamento.</p><a class="btn btn-primary" href="/conciliacao-arquivos">Enviar arquivos</a></section>
+{% else %}
+<section class="conc-run-head"><div><p class="eyebrow">RESULTADO DA CONCILIAÇÃO</p><h2>{{ arquivos.contabil }} <span>×</span> {{ arquivos.financeiro }}</h2><p>{{ arquivos.linhas_contabil }} linhas contábeis · {{ arquivos.linhas_financeiro }} linhas financeiras{% if arquivos.periodo %} · {{ arquivos.periodo }}{% endif %}</p></div><a class="btn btn-secondary" href="{{ export_url|default('/conciliacao/exportar.csv') }}"><i class="ph ph-download-simple"></i> Exportar CSV</a></section>
+<section class="kpi-grid conc-kpis">
+  {% for kpi in kpis %}<article class="kpi"><small>{{ kpi.label }}</small><strong>{% if kpi.currencycentavos|default(false) %}{{ kpi.value|money }}{% else %}{{ kpi.value }}{% endif %}</strong><span>{{ kpi.hint }}</span></article>{% endfor %}
+</section>
+<nav class="conc-statuses" aria-label="Filtrar situação">{% for item in statuses %}<a class="conc-status status-{{ item.key }} {{ 'is-current' if item.active }}" href="{{ item.url }}">{{ item.label }} <b>{{ item.count }}</b></a>{% endfor %}</nav>
+<section class="table-card tabela-wrap" data-pref-key="conciliacao" data-table-advanced>
+  <header class="section-head"><h2>Títulos em conferência</h2><span class="muted">{{ total }} de {{ total_geral }} registros</span></header>
+  <form class="table-search conc-search" method="get" action="/conciliacao">{% for key, value in request.args.items() if key not in ('q', 'page') %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}<input type="search" name="q" value="{{ request.args.get('q','') }}" placeholder="Buscar cliente, CNPJ ou título"><button class="btn btn-secondary" type="submit"><i class="ph ph-magnifying-glass"></i> Buscar</button></form>
+  <div class="table-scroll"><table data-server-page-size="true" data-page-size="{{ per_page }}" data-total="{{ total }}"><thead><tr>{% for col in columns %}<th data-col-key="{{ col.key }}" data-tipo="{{ col.tipo|default('numero' if col.numeric else 'texto') }}" class="{{ 'numeric' if col.numeric }}">{{ col.label }}</th>{% endfor %}</tr></thead><tbody>{% for row in rows %}<tr>{% for col in columns %}<td class="{{ 'numeric' if col.numeric }}">{% if col.key == 'titulo' %}<a class="row-link" href="{{ row._url|default('/conciliacao/detalhe/' ~ row.indice) }}">{{ row[col.key] }}</a>{% elif col.key == 'situacao' %}<span class="conc-badge status-{{ row.st }}">{{ row[col.key] }}</span>{% elif col.numeric %}{% if row[col.key] is none %}—{% else %}{{ row[col.key]|money }}{% endif %}{% else %}{{ row[col.key]|default('—', true) }}{% endif %}</td>{% endfor %}</tr>{% else %}<tr><td colspan="{{ columns|length }}" class="conc-no-results">Nenhum título atende aos filtros atuais.</td></tr>{% endfor %}</tbody></table></div>
+  {% if pages > 1 %}<footer class="table-footer conc-pagination"><a class="{{ 'is-disabled' if page == 1 }}" href="{{ queryurl(page=1) }}" aria-label="Primeira página">«</a><a class="{{ 'is-disabled' if page == 1 }}" href="{{ queryurl(page=page-1) if page > 1 else queryurl(page=1) }}" aria-label="Página anterior">‹</a><span>Página {{ page }} de {{ pages }}</span><a class="{{ 'is-disabled' if page == pages }}" href="{{ queryurl(page=page+1) if page < pages else queryurl(page=pages) }}" aria-label="Próxima página">›</a><a class="{{ 'is-disabled' if page == pages }}" href="{{ queryurl(page=pages) }}" aria-label="Última página">»</a></footer>{% endif %}
+</section>
+{% endif %}
+{% endblock %}

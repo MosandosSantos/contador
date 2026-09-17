@@ -1,0 +1,80 @@
+{% extends 'base.html' %}{% from 'modal_edicao.html' import modal with context %}
+{% block page_title %}eSocial · {{ periodo }}{% endblock %}
+{% block top_actions %}
+<form method="get" action="/esocial">
+  <input name="periodo" value="{{ periodo }}" aria-label="Período (AAAA-MM)" maxlength="7" placeholder="2026-08">
+  <button class="btn btn-secondary" type="submit">Trocar período</button>
+</form>
+<a class="btn btn-primary" href="/exportar/esocial?periodo={{ periodo }}"><i class="ph ph-download-simple" aria-hidden="true"></i> Gerar pacote eSocial</a>
+{% endblock %}
+{% block content %}
+<p class="intro">Eventos XML essenciais do eSocial (S-1000, S-1010, S-2200, S-1200, S-1299) em produção restrita (tpAmb=2), sem assinatura. Rascunho para conferência no AVS — o app não transmite nada.</p>
+{% if pendencias %}<section class="card"><h2>Pendências</h2><ul>{% for p in pendencias %}<li>{{ p }}</li>{% endfor %}</ul></section>{% endif %}
+
+<section class="card form-card"><header class="section-head"><h2>Empregador (S-1000)</h2></header>
+  <form method="post" action="/esocial/parametros">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <div class="grid-form">
+      <label>Classificação tributária *
+        <select name="clas_tribut" required>
+          <option value="">Selecione…</option>
+          {% for c in clas_tribut_validas %}<option value="{{ c }}" {{ 'selected' if parametros and parametros.clas_tribut == c }}>{{ c }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>Natureza jurídica *
+        <select name="nat_juridica" required>
+          <option value="">Selecione…</option>
+          {% for chave, rotulo in nat_juridicas.items() %}<option value="{{ chave }}" {{ 'selected' if parametros and parametros.nat_juridica == chave }}>{{ rotulo }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>Desoneração
+        <select name="ind_deson">
+          {% for v, r in [('0','Não'), ('1','Sim'), ('2','Período parcial')] %}<option value="{{ v }}" {{ 'selected' if parametros and parametros.ind_deson == v }}>{{ r }}</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+    <div class="form-actions"><button class="btn btn-primary" type="submit">Salvar parâmetros</button></div>
+  </form>
+</section>
+
+<section class="table-card"><header class="section-head"><h2>Empregados (S-2200)</h2><button type="button" class="btn btn-primary" data-create-modal="criar-empregado"><i class="ph ph-plus" aria-hidden="true"></i> Empregado</button></header>
+  {% if empregados %}<div class="table-scroll"><table><thead><tr><th>Nome</th><th>CPF</th><th>NIS</th><th>Cargo</th><th>CBO</th><th>Admissão</th><th>Salário</th><th>Ações</th></tr></thead><tbody>
+  {% for e in empregados %}<tr><td>{{ e.nome }}</td><td>{{ e.cpf }}</td><td>{{ e.nis or '—' }}</td><td>{{ e.cargo or '—' }}</td><td>{{ e.cbo or '—' }}</td><td>{{ e.data_admissao|data_br }}</td><td class="num">{{ e.salario_centavos|money_num }}</td><td><form method="post" action="/esocial/empregado/{{ e.id }}/remover" class="inline"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-secondary" type="submit">Remover</button></form></td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<div class="vz"><p>Nenhum empregado cadastrado.</p></div>{% endif %}
+</section>
+
+<section class="table-card"><header class="section-head"><h2>Rubricas (S-1010)</h2><button type="button" class="btn btn-primary" data-create-modal="criar-rubrica"><i class="ph ph-plus" aria-hidden="true"></i> Rubrica</button></header>
+  {% if rubricas %}<div class="table-scroll"><table><thead><tr><th>Código</th><th>Descrição</th><th>Tipo</th><th>INSS</th><th>IRRF</th><th>Ações</th></tr></thead><tbody>
+  {% for r in rubricas %}<tr><td>{{ r.codigo }}</td><td>{{ r.descricao }}</td><td>{{ r.tipo }}</td><td>{{ 'Sim' if r.incid_inss else 'Não' }}</td><td>{{ 'Sim' if r.incid_irrf else 'Não' }}</td><td><form method="post" action="/esocial/rubrica/{{ r.id }}/remover" class="inline"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-secondary" type="submit">Remover</button></form></td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<div class="vz"><p>Nenhuma rubrica cadastrada.</p></div>{% endif %}
+</section>
+
+<section class="table-card"><header class="section-head"><h2>Folha do período (S-1200)</h2><button type="button" class="btn btn-primary" data-create-modal="criar-folha"><i class="ph ph-plus" aria-hidden="true"></i> Lançamento</button></header>
+  {% if folha %}<div class="table-scroll"><table><thead><tr><th>Empregado</th><th>Rubrica</th><th>Tipo</th><th>Valor</th><th>Ações</th></tr></thead><tbody>
+  {% for f in folha %}<tr><td>{{ f.empregado_nome }}</td><td>{{ f.rubrica_codigo }} · {{ f.rubrica_descricao }}</td><td>{{ f.rubrica_tipo }}</td><td class="num">{{ f.valor_centavos|money_num }}</td><td><form method="post" action="/esocial/folha/{{ f.id }}/remover" class="inline"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-secondary" type="submit">Remover</button></form></td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<div class="vz"><p>Sem lançamentos neste período.</p></div>{% endif %}
+</section>
+
+{% call modal('criar-empregado','Empregado (S-2200)','/esocial/empregado') %}
+<div class="field"><label for="emp-nome">Nome</label><input id="emp-nome" name="nome" required maxlength="200"></div>
+<div class="field"><label for="emp-cpf">CPF</label><input id="emp-cpf" name="cpf" required maxlength="14" placeholder="000.000.000-00"></div>
+<div class="field"><label for="emp-nis">NIS/Pasep</label><input id="emp-nis" name="nis" maxlength="11"></div>
+<div class="field"><label for="emp-cargo">Cargo</label><input id="emp-cargo" name="cargo" maxlength="120"></div>
+<div class="field"><label for="emp-cbo">CBO</label><input id="emp-cbo" name="cbo" maxlength="6" placeholder="123456"></div>
+<div class="field"><label for="emp-data">Admissão</label><input id="emp-data" name="data_admissao" type="date" required></div>
+<div class="field"><label for="emp-salario">Salário (R$)</label><input id="emp-salario" name="salario" required inputmode="decimal" placeholder="0,00"></div>
+{% endcall %}
+{% call modal('criar-rubrica','Rubrica (S-1010)','/esocial/rubrica') %}
+<div class="field"><label for="rub-codigo">Código</label><input id="rub-codigo" name="codigo" required maxlength="30"></div>
+<div class="field"><label for="rub-descricao">Descrição</label><input id="rub-descricao" name="descricao" required maxlength="200"></div>
+<div class="field"><label for="rub-tipo">Tipo</label><select id="rub-tipo" name="tipo" required><option value="provento">Provento</option><option value="desconto">Desconto</option></select></div>
+<label class="check-inline"><input type="checkbox" name="incid_inss" value="1"> Incide INSS/FGTS</label>
+<label class="check-inline"><input type="checkbox" name="incid_irrf" value="1"> Incide IRRF</label>
+{% endcall %}
+{% call modal('criar-folha','Lançamento de folha (S-1200)','/esocial/folha') %}
+<div class="field"><label for="fol-periodo">Período (AAAA-MM)</label><input id="fol-periodo" name="periodo" required maxlength="7" value="{{ periodo }}"></div>
+<div class="field"><label for="fol-empregado">Empregado</label><select id="fol-empregado" name="empregado_id" required>{% for e in empregados %}<option value="{{ e.id }}">{{ e.nome }}</option>{% endfor %}</select></div>
+<div class="field"><label for="fol-rubrica">Rubrica</label><select id="fol-rubrica" name="rubrica_id" required>{% for r in rubricas %}<option value="{{ r.id }}">{{ r.codigo }} · {{ r.descricao }}</option>{% endfor %}</select></div>
+<div class="field"><label for="fol-valor">Valor (R$)</label><input id="fol-valor" name="valor" required inputmode="decimal" placeholder="0,00"></div>
+{% endcall %}
+{% endblock %}

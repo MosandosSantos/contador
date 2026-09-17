@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block page_title %}Conciliar arquivos{% endblock %}
+{% block head_extra %}<link rel="stylesheet" href="{{ url_for('static', filename='css/conciliacao.css') }}">{% endblock %}
+{% block content %}
+<section class="conc-hero">
+  <div><p class="eyebrow">CONCILIAÇÃO</p><h2>Contábil × Financeiro</h2><p>Envie as duas bases para cruzar cada título por <strong>Título + CNPJ</strong>.</p></div>
+  <div class="conc-rule"><i class="ph ph-scales"></i><span>Chave única nos dois arquivos: diferenças de até R$ 0,01 são conciliadas.</span></div>
+</section>
+{% if existente %}<p class="notice">O novo envio substitui a conciliação anterior. Os lançamentos dos demonstrativos permanecem como estão.</p>{% endif %}
+<form class="conc-upload" method="post" action="/conciliacao-arquivos" enctype="multipart/form-data" data-conc-upload>
+  <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+  <div class="conc-upload-grid">
+    <article class="card conc-source-card">
+      <header><span class="conc-source-icon"><i class="ph ph-buildings"></i></span><div><h2>Base contábil</h2><p>Contas a receber ou títulos registrados.</p></div></header>
+      <label class="dropzone conc-drop" for="conc-contabil" data-conc-drop="contabil">
+        <i class="ph ph-file-arrow-up" data-conc-icon></i><strong data-conc-title>Selecione o arquivo contábil</strong><span>CSV ou XLSX · até 12 MB</span><small class="im-arq" data-conc-name>Nenhum arquivo selecionado</small>
+      </label>
+      <input class="file-input" id="conc-contabil" name="contabil" type="file" accept=".csv,.xlsx" required data-conc-input="contabil">
+      <a class="conc-modelo" href="/conciliacao/modelo/contabil.csv"><i class="ph ph-download-simple"></i> Baixar modelo contábil</a>
+    </article>
+    <article class="card conc-source-card">
+      <header><span class="conc-source-icon"><i class="ph ph-wallet"></i></span><div><h2>Base financeira</h2><p>Baixas, recebimentos ou extrato financeiro.</p></div></header>
+      <label class="dropzone conc-drop" for="conc-financeiro" data-conc-drop="financeiro">
+        <i class="ph ph-file-arrow-up" data-conc-icon></i><strong data-conc-title>Selecione o arquivo financeiro</strong><span>CSV ou XLSX · até 12 MB</span><small class="im-arq" data-conc-name>Nenhum arquivo selecionado</small>
+      </label>
+      <input class="file-input" id="conc-financeiro" name="financeiro" type="file" accept=".csv,.xlsx" required data-conc-input="financeiro">
+      <a class="conc-modelo" href="/conciliacao/modelo/financeiro.csv"><i class="ph ph-download-simple"></i> Baixar modelo financeiro</a>
+    </article>
+  </div>
+  <footer class="conc-upload-action"><p data-conc-feedback role="status" aria-live="polite">Selecione os dois arquivos para continuar.</p><button class="btn btn-primary" type="submit" disabled data-conc-submit><i class="ph ph-arrows-left-right"></i> Ver a conciliação</button></footer>
+</form>
+<section class="page-grid conc-explainer"><article class="card"><i class="ph ph-fingerprint"></i><h2>Chave do cruzamento</h2><p>O título e o CNPJ identificam cada item. Duplicidades continuam visíveis para investigação.</p></article><article class="card"><i class="ph ph-list-magnifying-glass"></i><h2>Resultado rastreável</h2><p>Abra uma linha para conferir os valores e a origem em cada arquivo.</p></article></section>
+{% endblock %}
+{% block scripts_extra %}<script src="{{ url_for('static', filename='js/conciliacao.js') }}" defer></script>{% endblock %}

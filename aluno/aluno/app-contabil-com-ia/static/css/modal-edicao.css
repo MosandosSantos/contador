@@ -1,0 +1,28 @@
+dialog.record-modal{inset:0;margin:auto;padding:0;border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:var(--radius);background:var(--bg-elev);color:var(--text);overflow:visible!important;box-shadow:0 24px 100px #0009;max-width:96vw}
+dialog.record-modal.modal-md{width:55vw;max-height:70vh;--modal-height:70vh}
+dialog.record-modal.modal-lg{width:89vw;max-height:90vh;--modal-height:90vh}
+.record-modal::backdrop{background:#0009;backdrop-filter:blur(3px)}
+.record-modal .modal-cab{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;border-bottom:1px solid var(--border)}
+.record-modal h2{margin:0;font:700 18px var(--font-title)}
+.record-modal .modal-x{display:grid;place-items:center;width:36px;height:36px;flex-shrink:0;border:1px solid var(--border);border-radius:var(--radius-sm);background:transparent;color:var(--muted);font-size:20px;cursor:pointer}
+.record-modal .modal-x:hover{color:var(--text);background:var(--surface)}
+.record-modal>form{display:flex;flex-direction:column;max-height:calc(var(--modal-height) - 78px);margin:0}
+.record-modal .modal-corpo{padding:22px;overflow:auto;min-height:0;overscroll-behavior:contain}
+.record-modal .modal-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px 16px;align-items:start}
+.record-modal.modal-lg .modal-fields{grid-template-columns:repeat(3,minmax(0,1fr))}
+.record-modal .field{min-width:0;gap:8px}.record-modal .field.grow{grid-column:span 2}
+.record-modal .field label{min-height:20px;line-height:20px}.record-modal input[readonly]{color:var(--muted)}
+.record-modal .modal-rodape{padding:16px 22px;display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--border);flex-shrink:0}
+.record-modal .modal-aviso[hidden]{display:none}.record-modal .modal-aviso ul{margin:0 0 8px;padding-left:20px}
+.record-modal .campo-invalido,.record-modal .field:has([aria-invalid="true"]) .cmp-select-display{border-color:#ff7373!important}
+.record-modal .modal-aviso p{margin:0}.record-modal .cmp-select-panel{position:fixed;z-index:10;right:auto;min-width:0;max-width:96vw}
+.record-actions{display:flex;align-items:center;gap:8px;white-space:nowrap}.record-actions form{margin:0}
+body:has(dialog.record-modal[open]){overflow:hidden}
+@media(max-width:1280px){dialog.record-modal.modal-md{width:68vw}}
+@media(max-width:880px){dialog.record-modal.modal-md,dialog.record-modal.modal-lg{width:96vw;max-height:92vh;--modal-height:92vh}.record-modal .modal-fields,.record-modal.modal-lg .modal-fields{grid-template-columns:1fr}.record-modal .field.grow{grid-column:auto}.record-modal .modal-corpo{padding:18px}.record-modal .modal-cab,.record-modal .modal-rodape{padding:14px 18px}}
+
+/* Ações do cadastro ficam na faixa sticky; formulários só aparecem no modal. */
+.topbar-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.topbar-actions>form{margin:0}
+.topbar:has([data-create-modal]){height:auto;min-height:76px;padding-top:12px;padding-bottom:12px;flex-shrink:0}
+@media(max-width:880px){.topbar:has([data-create-modal]){flex-wrap:wrap;gap:10px}.topbar:has([data-create-modal]) .topbar-actions{width:100%;margin-left:0}.topbar-actions .btn{white-space:nowrap}}

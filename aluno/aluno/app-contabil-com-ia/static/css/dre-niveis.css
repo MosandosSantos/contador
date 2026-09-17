@@ -1,0 +1,20 @@
+#dre-niveis-modal .modal-fields{display:block}
+.dre-niveis-editor{display:grid;gap:18px}
+.dre-niveis-editor p{margin:0;line-height:1.5}
+.dre-nivel-raiz{display:flex;align-items:center;gap:12px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm)}
+.dre-nivel-raiz>span{margin-left:auto;color:var(--muted);font-size:12px}
+#dre-niveis-lista{list-style:none;display:grid;gap:10px;margin:0;padding:0}
+.dre-nivel-item{display:flex;align-items:center;gap:14px;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface)}
+.dre-nivel-item.is-off .dre-nivel-nome{color:var(--muted)}
+.dre-nivel-item.is-dragging{border-color:var(--accent);opacity:.65}
+.dre-nivel-nome{flex:1;min-width:0}
+.dre-nivel-item button{display:grid;place-items:center;width:32px;height:32px;background:transparent;border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);cursor:pointer}
+.dre-nivel-item .dre-drag{cursor:grab;border-color:transparent;font-size:20px;color:var(--muted)}
+.dre-nivel-item button:disabled{opacity:.25;cursor:default}
+.dre-nivel-setas{display:flex;gap:4px}
+#dre-niveis-resumo{font-size:12px;color:var(--accent-soft)}
+.dre-drill-trigger{width:32px;padding:0}
+.dre-drill-menu{width:290px}
+#dre-quadro .tabela-acoes{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.tree-level-21{--tree-level:21}
+@media(max-width:600px){.dre-nivel-item{gap:8px;padding:8px}.dre-nivel-raiz{flex-wrap:wrap}.dre-nivel-raiz>span{margin-left:0}.dre-nivel-nome{font-size:13px}}

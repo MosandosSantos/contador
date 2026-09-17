@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block top_actions %}{% endblock %}
+{% block content %}<p class="intro">Dados da empresa dona desta base. Aparecem nos relatórios e preparam o ambiente para a escrituração digital.</p>
+<section class="card form-card">
+  <form method="post" action="/empresa">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <div class="grid-form">
+      <label>CNPJ *<input name="cnpj" value="{{ e.cnpj or '' }}" required maxlength="18" placeholder="00.000.000/0000-00"></label>
+      <label>Razão social *<input name="razao_social" value="{{ e.razao_social or '' }}" required maxlength="200"></label>
+      <label>Nome fantasia<input name="nome_fantasia" value="{{ e.nome_fantasia or '' }}" maxlength="200"></label>
+      <label>Regime tributário *
+        <select name="regime" required>
+          <option value="">Selecione…</option>
+          {% for chave, rotulo in regimes.items() %}<option value="{{ chave }}" {{ 'selected' if e.regime == chave }}>{{ rotulo }}</option>{% endfor %}
+        </select>
+      </label>
+    </div>
+    <fieldset class="fieldset"><legend>Endereço</legend>
+      <div class="grid-form">
+        <label>CEP<input name="cep" value="{{ e.cep or '' }}" maxlength="9" placeholder="00000-000"></label>
+        <label class="grow">Logradouro<input name="logradouro" value="{{ e.logradouro or '' }}" maxlength="200"></label>
+        <label>Número<input name="numero" value="{{ e.numero or '' }}" maxlength="20"></label>
+        <label>Complemento<input name="complemento" value="{{ e.complemento or '' }}" maxlength="100"></label>
+        <label>Bairro<input name="bairro" value="{{ e.bairro or '' }}" maxlength="100"></label>
+        <label>Município<input name="municipio" value="{{ e.municipio or '' }}" maxlength="100"></label>
+        <label>UF<input name="uf" value="{{ e.uf or '' }}" maxlength="2" placeholder="SP"></label>
+        <label>Inscrição estadual<input name="ie" value="{{ e.ie or '' }}" maxlength="20"></label>
+        <label>Código IBGE do município<input name="cod_mun" value="{{ e.cod_mun or '' }}" maxlength="7" placeholder="3550308"></label>
+      </div>
+    </fieldset>
+    <div class="form-actions"><button class="btn btn-primary" type="submit">Salvar dados da empresa</button></div>
+  </form>
+</section>
+{% endblock %}

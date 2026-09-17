@@ -1,0 +1,78 @@
+{% extends 'base.html' %}{% from 'modal_edicao.html' import modal with context %}
+{% block page_title %}ECF fiscal · {{ ano }}{% endblock %}
+{% block top_actions %}
+<form method="get" action="/ecf">
+  <select name="ano" aria-label="Ano-calendário">
+    {% for a in anos %}<option value="{{ a }}" {{ 'selected' if a == ano }}>{{ a }}</option>{% endfor %}
+  </select>
+  <button class="btn btn-secondary" type="submit">Trocar ano</button>
+</form>
+<a class="btn btn-primary" href="/exportar/ecf"><i class="ph ph-download-simple" aria-hidden="true"></i> Gerar arquivo ECF</a>
+{% endblock %}
+{% block content %}
+{% if pendencias %}<section class="card"><h2>Pendências</h2><ul>{% for p in pendencias %}<li>{{ p }}</li>{% endfor %}</ul></section>{% endif %}
+
+<section class="card form-card"><header class="section-head"><h2>Parâmetros do ano</h2></header>
+  <form method="post" action="/ecf/parametros">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="hidden" name="ano" value="{{ ano }}">
+    <div class="grid-form">
+      <label>Forma de tributação *
+        <select name="forma_tributacao" required>
+          <option value="">Selecione…</option>
+          {% for chave, rotulo in formas.items() %}<option value="{{ chave }}" {{ 'selected' if parametros and parametros.forma_tributacao == chave }}>{{ rotulo }}</option>{% endfor %}
+        </select>
+      </label>
+      <label>Presunção IRPJ (%) *<input name="pct_presuncao_irpj" value="{{ parametros.pct_presuncao_irpj if parametros else '' }}" required inputmode="decimal" placeholder="8"></label>
+      <label>Presunção CSLL (%) *<input name="pct_presuncao_csll" value="{{ parametros.pct_presuncao_csll if parametros else '' }}" required inputmode="decimal" placeholder="12"></label>
+      <label class="check-inline"><input type="checkbox" name="adicional" value="1" {{ 'checked' if (not parametros) or parametros.adicional }}> Aplicar adicional de 10% do IRPJ</label>
+    </div>
+    <div class="form-actions"><button class="btn btn-primary" type="submit">Salvar parâmetros</button></div>
+  </form>
+</section>
+
+{% if numeros %}
+<section class="kpi-grid">
+  <div class="kpi"><p>Receita bruta do ano</p><strong>{{ numeros.receita_bruta|money_num }}</strong></div>
+  <div class="kpi"><p>Lucro contábil (Y180)</p><strong>{{ numeros.lucro_contabil|money_num }}</strong></div>
+  <div class="kpi"><p>IRPJ presumido</p><strong>{{ numeros.total_irpj|money_num }}</strong></div>
+  <div class="kpi"><p>CSLL presumida</p><strong>{{ numeros.total_csll|money_num }}</strong></div>
+</section>
+{% elif parametros %}
+<section class="card"><div class="vz"><h3>Sem base para calcular</h3><p>Importe lançamentos do ano para calcular a apuração presumida.</p></div></section>
+{% endif %}
+
+<section class="table-card"><header class="section-head"><h2>Lançamentos na apuração (Parte B)</h2><button type="button" class="btn btn-primary" data-create-modal="criar-conta-pb"><i class="ph ph-plus" aria-hidden="true"></i> Conta Parte B</button><button type="button" class="btn btn-secondary" data-create-modal="criar-lancamento"><i class="ph ph-plus" aria-hidden="true"></i> Lançamento</button></header>
+  {% if contas_pb %}<div class="table-scroll"><table><thead><tr><th>Código</th><th>Descrição</th><th>Parte</th><th>Ações</th></tr></thead><tbody>
+  {% for c in contas_pb %}<tr><td>{{ c.codigo }}</td><td>{{ c.descricao }}</td><td>{{ c.tipo }}</td><td><button type="button" class="btn btn-secondary" data-edit-modal="criar-conta-pb" data-record='{{ {"codigo": c.codigo, "descricao": c.descricao, "tipo": c.tipo}|tojson }}'>Editar</button></td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<div class="vz"><p>Nenhuma conta Parte B. Cadastre antes de lançar adições/exclusões.</p></div>{% endif %}
+  {% if lancamentos %}<div class="table-scroll"><table><thead><tr><th>Período</th><th>Data</th><th>Conta</th><th>Tipo</th><th>Valor</th><th>Histórico</th><th>Ações</th></tr></thead><tbody>
+  {% for l in lancamentos %}<tr><td>{{ l.periodo }}</td><td>{{ l.data|data_br }}</td><td>{{ l.conta_pb }} · {{ l.conta_pb_descricao }}</td><td>{{ l.tipo }}</td><td class="num">{{ l.valor_centavos|money_num }}</td><td>{{ l.historico or '—' }}</td><td><form method="post" action="/ecf/lancamento/{{ l.id }}/remover"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-secondary" type="submit">Remover</button></form></td></tr>{% endfor %}
+  </tbody></table></div>{% endif %}
+</section>
+
+<section class="table-card"><header class="section-head"><h2>Conciliação contábil × fiscal (Y680)</h2><button type="button" class="btn btn-primary" data-create-modal="criar-conciliacao"><i class="ph ph-plus" aria-hidden="true"></i> Adicionar item</button></header>
+  {% if conciliacao %}<div class="table-scroll"><table><thead><tr><th>Conta</th><th>Valor</th><th>Histórico</th><th>Ações</th></tr></thead><tbody>
+  {% for c in conciliacao %}<tr><td>{{ c.conta_id }}</td><td class="num">{{ c.valor_centavos|money_num }}</td><td>{{ c.historico or '—' }}</td><td><form method="post" action="/ecf/conciliacao/{{ c.id }}/remover"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-secondary" type="submit">Remover</button></form></td></tr>{% endfor %}
+  </tbody></table></div>{% else %}<div class="vz"><p>Sem itens de conciliação. Valores positivos somam ao lucro contábil; negativos excluem.</p></div>{% endif %}
+</section>
+
+{% call modal('criar-conta-pb','Conta Parte B','/ecf/conta-pb') %}
+<div class="field"><label for="cpb-codigo">Código</label><input id="cpb-codigo" name="codigo" required maxlength="30"></div>
+<div class="field"><label for="cpb-descricao">Descrição</label><input id="cpb-descricao" name="descricao" required maxlength="200"></div>
+<div class="field"><label for="cpb-tipo">Parte</label><select id="cpb-tipo" name="tipo" required><option value="A">Parte A</option><option value="B">Parte B</option></select></div>
+{% endcall %}
+{% call modal('criar-lancamento','Lançamento Parte B','/ecf/lancamento') %}
+<div class="field"><label for="lan-periodo">Período (AAAATn)</label><input id="lan-periodo" name="periodo" required maxlength="6" placeholder="{{ ano }}T1"></div>
+<div class="field"><label for="lan-conta">Conta Parte B</label><select id="lan-conta" name="conta_pb" required>{% for c in contas_pb %}<option value="{{ c.codigo }}">{{ c.codigo }} · {{ c.descricao }}</option>{% endfor %}</select></div>
+<div class="field"><label for="lan-tipo">Tipo</label><select id="lan-tipo" name="tipo" required><option value="A">A · Adição</option><option value="B">B · Exclusão</option><option value="C">C · Compensação</option></select></div>
+<div class="field"><label for="lan-data">Data</label><input id="lan-data" name="data" type="date" required></div>
+<div class="field"><label for="lan-valor">Valor (R$)</label><input id="lan-valor" name="valor" required inputmode="decimal" placeholder="0,00"></div>
+<div class="field"><label for="lan-historico">Histórico</label><input id="lan-historico" name="historico" maxlength="500"></div>
+{% endcall %}
+{% call modal('criar-conciliacao','Conciliação fiscal (Y680)','/ecf/conciliacao') %}
+<div class="field"><label for="con-conta">Conta contábil</label><select id="con-conta" name="conta_id" required>{% for c in contas_resultado %}<option value="{{ c.conta_id }}">{{ c.conta_id }} · {{ c.descricao }}</option>{% endfor %}</select></div>
+<div class="field"><label for="con-valor">Valor (R$, negativo exclui)</label><input id="con-valor" name="valor" required inputmode="decimal" placeholder="0,00"></div>
+<div class="field"><label for="con-historico">Histórico</label><input id="con-historico" name="historico" maxlength="500"></div>
+{% endcall %}
+{% endblock %}

@@ -1,0 +1,7 @@
+.report-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;padding:14px 18px;border:1px solid var(--border);border-radius:12px;background:var(--surface)}
+.report-unit,.report-options,.report-option{display:flex;align-items:center;gap:12px}.report-unit{flex-wrap:wrap;font-size:12px}.report-options{gap:24px}.report-option{font-size:13px;white-space:nowrap}.report-option>label{cursor:pointer}
+.report-toolbar [hidden]{display:none}.report-toolbar .notice{flex:1 0 100%;margin:0}
+.content span[data-report-money],.content span[data-report-unit]{display:inline;font:inherit;color:inherit;margin:0}
+.kpi strong span[data-report-unit],.conc-detail-summary strong span[data-report-unit]{font-size:.6em}
+.report-centavos-label{font-variant-numeric:tabular-nums}.report-centavos-riscado{text-decoration-line:line-through;text-decoration-thickness:1px}
+@media(max-width:650px){.report-options{flex-wrap:wrap;gap:16px}.report-option{justify-content:space-between}.report-toolbar{align-items:flex-start}}

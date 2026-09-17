@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block head_extra %}<link rel="stylesheet" href="{{ url_for('static',filename='css/relatorios-periodo.css') }}">{% endblock %}
+{% block report_presentation %}{% endblock %}
+{% block top_actions %}{% include 'filtro_relatorio_botao.html' %}{% endblock %}
+{% macro valores_header(titulo,subtitulo,controles=true) %}<header class="section-head report-head-compact"><div class="report-heading"><h2>{{ titulo }}</h2><small class="muted">{{ subtitulo }} · <span data-report-unit>{{ 'R$ mil' if report_format.mil else 'R$' }}</span></small></div><div class="tabela-acoes">{% if controles %}{% with report_compact=true %}{% include 'apresentacao_relatorios.html' %}{% endwith %}{% endif %}</div></header>{% endmacro %}
+{% block content %}
+{% if active == 'dre' %}<section class="kpi-grid report-kpis">{% for k in periodo.kpis %}<article class="kpi"><small>{{ k.label }}</small><strong>{% if k.percentual %}{{ ('%.1f%%'|format(k.value))|replace('.',',') if k.value is not none else '—' }}{% else %}{{ k.value|money_num }}{% endif %}</strong><span>{{ data_de|data_br }} a {{ data_ate|data_br }}</span></article>{% endfor %}</section>{% endif %}
+{% if periodo.ultimo and data_ate > periodo.ultimo %}<p class="notice">Lançamentos disponíveis até {{ periodo.ultimo|data_br }}. O relatório considera somente os dados importados.</p>{% endif %}
+{% if active == 'balanco' %}
+<section class="balance-grid">{% for lado in periodo.balanco_lados %}<article class="table-card statement period-report">
+{{ valores_header(lado.titulo,data_de|data_br ~ ' a ' ~ data_ate|data_br,loop.first) }}
+<div class="table-scroll"><table id="balanco-arvore-{{ loop.index }}" data-tree="true" data-tree-depth="3"><thead><tr><th data-col-key="conta">Conta / grupo</th><th class="numeric" data-col-key="anterior">{{ periodo.data_anterior|data_br }}</th><th class="numeric" data-col-key="atual">{{ data_ate|data_br }}</th></tr></thead><tbody>
+{% for x in lado.linhas %}<tr data-node-id="{{ x.node_id }}" data-parent-id="{{ x.parent_id }}" data-level="{{ x.level }}" class="{{ 'row-subtotal' if x.has_children }}"><td><div class="tree-cell tree-level-{{ x.level }}">{% if x.has_children %}<button type="button" class="tree-toggle" data-tree-toggle aria-expanded="true" aria-label="Recolher {{ x.nome }}"><i class="ph ph-caret-down" aria-hidden="true"></i></button>{% else %}<span class="tree-spacer" aria-hidden="true"></span>{% endif %}{% if x.conta_id and modulo_disponivel('razao') %}<a href="{{ url_for('pages.screen',active='razao',conta=x.conta_id,data_de=data_de,data_ate=data_ate) }}">{{ x.conta_id }} · {{ x.nome }}</a>{% else %}<span>{{ x.nome }}</span>{% endif %}</div></td><td class="numeric">{{ x.anterior|money_num }}</td><td class="numeric">{{ x.atual|money_num }}</td></tr>{% endfor %}
+<tr class="row-total" data-node-id="total-lado" data-parent-id="" data-level="0"><td>Total {{ lado.titulo|lower }}</td><td class="numeric">{{ lado.anterior|money_num }}</td><td class="numeric">{{ lado.total|money_num }}</td></tr></tbody></table></div></article>{% endfor %}</section>
+{% elif active == 'dre' %}
+<section class="table-card statement period-report" id="dre-referencia-quadro">{{ valores_header('DRE de referência',data_de|data_br ~ ' a ' ~ data_ate|data_br) }}
+<div class="table-scroll"><table id="dre-referencia-periodo"><thead><tr><th>Linha da demonstração</th>{% for mes in periodo.periodos %}<th class="numeric">{{ mes.competencia[5:7] }}/{{ mes.competencia[:4] }}</th>{% endfor %}{% if periodo.periodos|length>1 %}<th class="numeric">Total do período</th>{% endif %}<th class="numeric" title="{{ periodo.anterior_de|data_br }} a {{ periodo.anterior_ate|data_br }}">{{ periodo.anterior_ate[:4] }}<small>Mesmo período</small></th></tr></thead><tbody>{% for linha in periodo.dre_linhas %}<tr class="{{ 'row-subtotal' if linha.tipo == 'subtotal' }}"><td>{{ linha.nome }}</td>{% for v in linha.valores %}<td class="numeric">{{ v|money_num }}</td>{% endfor %}{% if periodo.periodos|length>1 %}<td class="numeric emphasis">{{ linha.total|money_num }}</td>{% endif %}<td class="numeric">{{ linha.anterior|money_num }}</td></tr>{% endfor %}</tbody></table></div></section>
+{% elif active == 'dmpl' %}
+<section class="table-card statement period-report">{{ valores_header('Mutações do patrimônio líquido',data_de|data_br ~ ' a ' ~ data_ate|data_br) }}
+{% macro linha_dmpl(linha) %}<tr data-dmpl-ano="{{ linha.ano }}" data-dmpl-tipo="{{ linha.tipo }}" class="{{ 'row-total' if linha.tipo == 'saldo' }}"><td>{{ ('Saldo' if linha.nome == 'Saldo final' else linha.nome|replace('_',' ')|capitalize) }}{% if linha.data %} · {{ linha.data|data_br }}{% endif %}</td>{% for c in periodo.componentes_pl %}<td class="numeric">{{ linha.componentes.get(c,0)|money_num }}</td>{% endfor %}<td class="numeric emphasis">{{ linha.total|money_num }}</td></tr>{% endmacro %}
+<div class="table-scroll"><table id="dmpl-periodo"><thead><tr><th>Movimentação</th>{% for c in periodo.componentes_pl %}<th class="numeric">{{ c|replace('_',' ')|capitalize }}</th>{% endfor %}<th class="numeric">Total PL</th></tr></thead><tbody>
+{{ linha_dmpl(periodo.dmpl_secoes[0].linhas[0]) }}
+{% for secao in periodo.dmpl_secoes %}
+<tr class="dmpl-exercicio" data-dmpl-exercicio="{{ secao.ano }}"><td>{{ secao.ano }}</td>{% for c in periodo.componentes_pl %}<td></td>{% endfor %}<td></td></tr>
+{% for linha in secao.linhas[1:] %}{{ linha_dmpl(linha) }}{% endfor %}
+{% endfor %}</tbody></table></div></section>
+{% endif %}
+{% include 'filtro_relatorio_modal.html' %}
+{% endblock %}
+{% block scripts_extra %}<script src="{{ url_for('static',filename='js/filtro-relatorio.js') }}" defer></script>{% endblock %}

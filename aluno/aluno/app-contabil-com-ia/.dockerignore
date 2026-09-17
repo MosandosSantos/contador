@@ -1,0 +1,16 @@
+.runtime/
+.venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+.env
+.git/
+00_GENESIS/
+testes/
+z_Versoes/
+backups/
+*.log
+*.md
+*.bat
+scripts/local.py
+scripts/laboratorio*

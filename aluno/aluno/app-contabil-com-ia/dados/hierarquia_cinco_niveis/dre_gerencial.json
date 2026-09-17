@@ -1,0 +1,132 @@
+{
+  "grupos": [
+    {
+      "codigo": "receita_bruta",
+      "nome": "Receita bruta",
+      "ordem": 10,
+      "tipo": "detalhe"
+    },
+    {
+      "codigo": "deducoes",
+      "nome": "Deduções da receita",
+      "ordem": 20,
+      "tipo": "detalhe"
+    },
+    {
+      "codigo": "receita_liquida",
+      "nome": "Receita líquida",
+      "ordem": 30,
+      "tipo": "subtotal"
+    },
+    {
+      "codigo": "custos_servicos",
+      "nome": "Custos dos serviços",
+      "ordem": 40,
+      "tipo": "detalhe"
+    },
+    {
+      "codigo": "lucro_bruto",
+      "nome": "Lucro bruto",
+      "ordem": 50,
+      "tipo": "subtotal"
+    },
+    {
+      "codigo": "pessoal",
+      "nome": "Despesas com pessoal",
+      "ordem": 60,
+      "tipo": "detalhe"
+    },
+    {
+      "codigo": "estrutura",
+      "nome": "Despesas de estrutura",
+      "ordem": 70,
+      "tipo": "detalhe"
+    },
+    {
+      "codigo": "ebitda",
+      "nome": "EBITDA",
+      "ordem": 80,
+      "tipo": "subtotal"
+    },
+    {
+      "codigo": "depreciacao",
+      "nome": "Depreciação",
+      "ordem": 90,
+      "tipo": "detalhe"
+    },
+    {
+      "codigo": "ebit",
+      "nome": "Resultado operacional",
+      "ordem": 100,
+      "tipo": "subtotal"
+    },
+    {
+      "codigo": "financeiro",
+      "nome": "Resultado financeiro",
+      "ordem": 110,
+      "tipo": "detalhe"
+    },
+    {
+      "codigo": "resultado_antes_tributos",
+      "nome": "Resultado antes dos tributos",
+      "ordem": 120,
+      "tipo": "subtotal"
+    },
+    {
+      "codigo": "tributos_resultado",
+      "nome": "Tributos sobre o resultado",
+      "ordem": 130,
+      "tipo": "detalhe"
+    },
+    {
+      "codigo": "resultado_liquido",
+      "nome": "Resultado líquido",
+      "ordem": 140,
+      "tipo": "subtotal"
+    }
+  ],
+  "contas": [
+    {
+      "conta_id": "31101001",
+      "destino": "receita_bruta"
+    },
+    {
+      "conta_id": "31201001",
+      "destino": "deducoes"
+    },
+    {
+      "conta_id": "33101001",
+      "destino": "custos_servicos"
+    },
+    {
+      "conta_id": "34101001",
+      "destino": "pessoal"
+    },
+    {
+      "conta_id": "34102001",
+      "destino": "estrutura"
+    },
+    {
+      "conta_id": "34103001",
+      "destino": "depreciacao"
+    },
+    {
+      "conta_id": "35101001",
+      "destino": "financeiro"
+    },
+    {
+      "conta_id": "36101001",
+      "destino": "tributos_resultado"
+    }
+  ],
+  "centros": [
+    {
+      "centro_id": "ADMIN",
+      "destino": "pessoal"
+    },
+    {
+      "centro_id": "OPERACAO",
+      "destino": "custos_servicos"
+    }
+  ]
+}

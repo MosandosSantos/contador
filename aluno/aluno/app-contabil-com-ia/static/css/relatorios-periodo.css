@@ -1,0 +1,13 @@
+.topbar:has([data-edit-modal="relatorio-filtro"]){height:auto;min-height:76px;padding-top:12px;padding-bottom:12px;gap:16px}
+.topbar:has([data-edit-modal="relatorio-filtro"]) .topbar-actions{display:flex;align-items:center;gap:12px}.topbar-actions form{margin:0;display:flex;gap:10px;align-items:center}
+.report-heading{display:grid;gap:4px;margin-right:auto}.report-heading h2{margin:0}.report-heading small{font-size:12px}
+.report-head-compact .tabela-acoes{display:flex;gap:8px;align-items:center;flex-shrink:0}.report-head-compact .report-toolbar-compact{padding:0 12px 0 0;border:0;background:transparent;border-radius:0;position:relative}.report-head-compact .report-toolbar-compact .notice{position:absolute;top:calc(100% + 12px);right:0;min-width:260px;z-index:80}
+.report-account-picker{grid-column:1/-1}.report-account-list{max-height:260px;overflow:auto;border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px}.report-account-list label{display:flex;gap:12px;padding:8px;align-items:center;cursor:pointer;font-size:13px}.report-account-list [hidden]{display:none}.report-account-list input{width:16px;height:16px;accent-color:var(--accent);flex-shrink:0}
+#relatorio-filtro input[type=date]{color-scheme:dark}.period-report td.numeric{font-variant-numeric:tabular-nums}.period-report th.numeric{min-width:125px}.cash-category{padding-left:4ch!important}.report-kpis .kpi strong{white-space:nowrap}.report-section-stack{display:grid;gap:24px}.budget-delta-good{color:#6ee7a0}.budget-delta-bad{color:#ff9c92}.budget-note{font-size:12px;color:var(--muted)}
+@media(max-width:1200px){.report-head-compact{flex-wrap:wrap;gap:16px}.report-head-compact .tabela-acoes{margin-left:auto}}
+@media(max-width:750px){.topbar:has([data-edit-modal="relatorio-filtro"]){flex-wrap:wrap}.topbar:has([data-edit-modal="relatorio-filtro"]) .topbar-actions{width:100%;flex-wrap:wrap;justify-content:flex-end}.report-head-compact .tabela-acoes{flex-wrap:wrap;justify-content:flex-end;max-width:100%}.report-head-compact .report-toolbar-compact{padding:0;width:100%}.report-head-compact .report-options{justify-content:flex-end;width:100%;gap:16px}.topbar-actions [role=radio]{padding:0 10px}}
+
+.period-report th small{display:block;margin-top:5px;font-size:10px;letter-spacing:.02em}
+
+.dmpl-exercicio td{background:var(--bg);border-top:2px solid var(--accent);padding-top:20px;padding-bottom:14px;font-weight:700;color:var(--accent-soft)}
+.dmpl-exercicio td:first-child{white-space:nowrap}

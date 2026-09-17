@@ -1,0 +1,17 @@
+<div class="dre-niveis-editor" data-root-label="{{ niveis_raiz|default('Grupo DRE') }}">
+  <p>Ative os níveis que quer mostrar. Arraste pela alça para definir a ordem ou use as setas.</p>
+  <div class="dre-nivel-raiz"><i class="ph ph-tree-structure"></i><strong>{{ niveis_raiz|default('Grupo DRE') }}</strong><span>{{ niveis_ajuda|default('Primeiro nível, fixo') }}</span></div>
+  <input type="hidden" name="niveis" id="dre-niveis-valor">
+  <ol id="dre-niveis-lista" aria-label="Ordem do detalhamento">
+  {% for opcao in editor_niveis %}
+    <li class="dre-nivel-item" data-nivel="{{ opcao.chave }}" data-inicial="{{ 'true' if opcao.selecionado else 'false' }}">
+      <button type="button" class="dre-drag" draggable="true" aria-label="Arrastar {{ opcao.nome }}" title="Arraste para mudar a ordem"><i class="ph ph-dots-six-vertical"></i></button>
+      <span class="dre-nivel-nome">{{ opcao.nome }}</span>
+      <div class="dre-nivel-setas"><button type="button" data-mover="-1" aria-label="Subir {{ opcao.nome }}"><i class="ph ph-arrow-up"></i></button><button type="button" data-mover="1" aria-label="Descer {{ opcao.nome }}"><i class="ph ph-arrow-down"></i></button></div>
+      <span class="cv-sw"><input type="checkbox" id="dre-nivel-{{ loop.index }}" aria-label="Mostrar {{ opcao.nome }}" {{ 'checked' if opcao.selecionado }}><label for="dre-nivel-{{ loop.index }}" aria-label="Mostrar {{ opcao.nome }}"></label></span>
+    </li>
+  {% endfor %}
+  </ol>
+  <p class="muted">Centro de custo pode ficar na ordem escolhida. Valores sem centro permanecem em “Sem centro”.</p>
+  <p id="dre-niveis-resumo" role="status"></p>
+</div>

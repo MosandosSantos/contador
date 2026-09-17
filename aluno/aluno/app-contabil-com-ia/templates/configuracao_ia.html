@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block head_extra %}<link rel="stylesheet" href="{{ url_for('static', filename='css/configuracao-ia.css') }}">{% endblock %}
+{% block top_actions %}<button class="btn btn-primary" form="configuracao-ia" type="submit" aria-label="Salvar configuração" data-ia-save disabled><i class="ph ph-floppy-disk" aria-hidden="true"></i><span class="ia-save-long">Salvar configuração</span><span class="ia-save-short">Salvar</span></button>{% endblock %}
+{% block content %}
+<div class="ia-settings">
+  <section class="card form-stack">
+    <header class="card-header"><div><h2>Conecte a inteligência artificial</h2><p class="muted">Gere sua chave, escolha o modelo e confira a conexão antes de salvar.</p></div><i class="ph ph-sparkle" aria-hidden="true"></i></header>
+    <div class="ia-connection-status"><i class="ph ph-plugs-connected" aria-hidden="true"></i><span>{{ 'Configuração em uso' if ia.configurada else 'Aguardando sua chave' }}{% if ia.configurada %}<small>Modelo salvo: {{ ia.modelo }}</small>{% endif %}<small>{{ 'Sua configuração atual continua ativa enquanto você testa uma nova escolha.' if ia.configurada else 'Você só ativa a IA depois de testar e salvar.' }}</small></span></div>
+    {% if erro %}<p class="notice notice-error" role="alert">{{ erro }}</p>{% endif %}
+    <form id="configuracao-ia" method="post" class="form-stack" autocomplete="off" data-ia-configurada="{{ 'true' if ia.configurada else 'false' }}">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <input type="hidden" name="teste_token" value="">
+      <div class="field">
+        <div class="ia-field-heading"><label for="ia-chave">1 · Chave da API NVIDIA</label><a class="btn btn-secondary" href="https://build.nvidia.com/settings/api-keys" target="_blank" rel="noreferrer"><i class="ph ph-key" aria-hidden="true"></i> Gerar minha chave <i class="ph ph-arrow-square-out" aria-hidden="true"></i></a></div>
+        <p class="muted">Entre na sua conta NVIDIA, gere uma API key e cole abaixo.</p>
+        <input id="ia-chave" name="chave" type="password" maxlength="500" autocomplete="new-password" spellcheck="false" placeholder="{{ '••••••••••••••••' if ia.configurada else 'Cole sua chave nvapi-…' }}" {% if ia.configurada %}class="ia-key-configured"{% endif %} aria-describedby="ia-chave-ajuda" {% if not ia.configurada %}required{% endif %}>
+        <small id="ia-chave-ajuda" class="muted">{% if ia.configurada %}<span class="ia-key-confirmation"><i class="ph ph-check-circle" aria-hidden="true"></i> Chave cadastrada.</span> Clique no campo para substituir. Deixe vazio para manter a atual.{% else %}Cole sua chave e teste o modelo antes de salvar.{% endif %}</small>
+      </div>
+      <div class="field">
+        <div class="ia-field-heading"><label for="ia-modelo">2 · Escolha o modelo</label><button class="btn btn-secondary" type="button" data-ia-load-models><i class="ph ph-arrows-clockwise" aria-hidden="true"></i> Carregar modelos NVIDIA</button></div>
+        <select id="ia-modelo" name="modelo" required aria-describedby="ia-modelo-ajuda">
+          <option value="" {% if not modelo %}selected{% endif %} disabled>Selecione um modelo para testar</option>
+          {% for item in modelos %}<option value="{{ item.id }}" data-descricao="{{ item.descricao }}" data-url="{{ item.url }}" {% if modelo == item.id %}selected{% endif %}>{{ item.nome }}{{ ' · Recomendado' if item.id == recomendado else '' }}</option>{% endfor %}
+          {% if modelo_fora_catalogo %}<option value="{{ modelo }}" data-descricao="Modelo atual fora da seleção recomendada. Confira sua disponibilidade no teste." selected>Atual: {{ modelo }}</option>{% endif %}
+          <option value="__manual__">Informar identificador de outro modelo…</option>
+        </select>
+        <div class="field" data-ia-manual hidden><label for="ia-modelo-manual">Identificador do modelo</label><input id="ia-modelo-manual" name="modelo_manual" maxlength="120" spellcheck="false" placeholder="Ex.: nvidia/nemotron-3-super-120b-a12b" disabled><small class="muted">Cole o identificador usado na sua IDE ou no exemplo de código da NVIDIA.</small></div>
+        <p class="muted ia-catalog-status" data-ia-catalog-status role="status">Carregue o catálogo com sua chave ou informe o identificador de outro modelo.</p>
+        <div class="ia-model-recommendation"><i class="ph ph-lightning" aria-hidden="true"></i><div><strong data-ia-model-title>Recomendação: NVIDIA Nemotron 3 Super</strong><p id="ia-modelo-ajuda" data-ia-model-description>{{ modelos[0].descricao }}</p><a data-ia-model-link href="{{ modelos[0].url }}" target="_blank" rel="noreferrer">Ver o modelo no catálogo NVIDIA <i class="ph ph-arrow-square-out" aria-hidden="true"></i></a></div></div>
+      </div>
+    </form>
+    <div class="form-stack ia-test-step">
+      <h3>3 · Teste antes de salvar</h3><p class="muted">O teste consulta o modelo escolhido, sem enviar os dados da empresa. Quando ele responder, o botão Salvar será liberado.</p>
+      <div class="ia-settings-actions"><button class="btn btn-primary" type="button" data-ia-test data-csrf="{{ csrf_token }}"><i class="ph ph-plugs-connected" aria-hidden="true"></i> Testar modelo</button><a class="btn btn-secondary" href="/analise"><i class="ph ph-chat-circle-text" aria-hidden="true"></i> Abrir análise financeira</a></div>
+      <p class="ia-test-result" data-ia-result role="status" aria-live="polite">Selecione um modelo e faça o teste para liberar Salvar.</p>
+    </div>
+    <p class="muted ia-settings-note">A configuração é mantida quando você usa Limpar. O acesso gratuito depende do modelo e da sua conta NVIDIA; a disponibilidade pode mudar.</p>
+  </section>
+</div>
+{% endblock %}
+{% block scripts_extra %}<script src="{{ url_for('static', filename='js/configuracao-ia.js') }}" defer></script>{% endblock %}

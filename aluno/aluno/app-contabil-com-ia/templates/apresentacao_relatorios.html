@@ -1,0 +1,8 @@
+<div class="report-toolbar {{ 'report-toolbar-compact' if report_compact }}" data-report-presentation data-csrf="{{ csrf_token }}" role="group" aria-label="Apresentação dos valores">
+  {% if not report_compact %}<div class="report-unit"><strong data-report-unit>{{ 'R$ mil' if report_format.mil else 'R$' }}</strong>{% if base_av_nome %}<span class="muted">AV sobre {{ base_av_nome }}</span>{% endif %}</div>{% endif %}
+  <div class="report-options">
+    <div class="report-option"><label for="report-mil">÷ 1.000</label><span class="cv-sw"><input id="report-mil" type="checkbox" role="switch" aria-label="Dividir por 1.000" {{ 'checked' if report_format.mil }}><label for="report-mil" aria-hidden="true"></label></span></div>
+    <div class="report-option"><label for="report-centavos" class="report-centavos-label" title="Cortar centavos" aria-label="Cortar centavos"><span aria-hidden="true">,<span class="report-centavos-riscado">00</span></span></label><span class="cv-sw"><input id="report-centavos" type="checkbox" role="switch" aria-label="Cortar centavos" {{ 'checked' if not report_format.centavos }}><label for="report-centavos" aria-hidden="true"></label></span></div>
+  </div>
+  <p class="notice notice-error" role="alert" data-report-format-error hidden></p>
+</div>
