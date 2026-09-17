@@ -340,6 +340,14 @@ def csv_response(rows,filename):
 @pages.get('/modelo/<kind>')
 @login_required
 def modelo(kind):
+    if kind=='nf':
+        base=dict(periodo='2026-08',tipo='saida',participante='12.345.678/0001-95',numero='101',serie='1',data_emissao='2026-08-05')
+        itens=[dict(base,descricao='Licença de software',cst_pis='01',cst_cofins='01',cfop='6101',ncm='84713000',cst_icms='00',vl_item='1000.00',vl_bc_icms='1000.00',aliq_icms='18.00',vl_icms='180.00',vl_bc_ipi='1000.00',aliq_ipi='10.00',vl_ipi='100.00',vl_bc_pis='1000.00',aliq_pis='1.65',vl_pis='16.50',vl_bc_cofins='1000.00',aliq_cofins='7.60',vl_cofins='76.00',valor_total='1500.00'),
+               dict(base,descricao='Implantação (serviço)',cst_pis='01',cst_cofins='01',cfop='6101',ncm='',cst_icms='',vl_item='500.00',vl_bc_icms='500.00',aliq_icms='18.00',vl_icms='90.00',vl_bc_ipi='',aliq_ipi='',vl_ipi='',vl_bc_pis='500.00',aliq_pis='1.65',vl_pis='8.25',vl_bc_cofins='500.00',aliq_cofins='7.60',vl_cofins='38.00',valor_total='')]
+        return csv_response(itens,'modelo_nf')
+    if kind=='folha-esocial':
+        return csv_response([{'periodo':'2026-08','cpf':'529.982.247-25','rubrica':'SAL001','valor':'3000.00'},
+                             {'periodo':'2026-08','cpf':'529.982.247-25','rubrica':'INSS','valor':'330.00'}],'modelo_folha_esocial')
     if kind not in ('lancamentos','extrato'):abort(404)
     rows=json.loads((ROOT/'dados'/f'{kind}.json').read_text(encoding='utf-8'))
     if kind=='extrato':

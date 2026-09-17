@@ -1,12 +1,12 @@
 """eSocial: empregados, rubricas, folha mensal e pacote de XMLs rascunho."""
 import re
 from datetime import date
-from decimal import Decimal, InvalidOperation
 from flask import Blueprint, request, render_template, flash, redirect, Response
 from flask_login import login_required
 from psycopg2.extras import Json
 from core.db import fetch, connection
 from core.formularios import resposta_edicao
+from core.importacao import ler_tabela, celula, decimal_celula
 from core.config_empresa import cpf_valido, formatar_cpf, normalizar_documento
 from core.esocial import gerar, empacotar, CLAS_TRIB_VALIDAS
 
@@ -19,10 +19,16 @@ NAT_JURIDICAS = {'2062': 'Sociedade empresária limitada', '2135': 'Empresário 
 
 
 def _centavos(campo):
+    return _centavos_valor(request.form.get(campo, ''))
+
+
+def _centavos_valor(bruto):
     try:
-        valor = Decimal(request.form.get(campo, '').replace(',', '.'))
-    except InvalidOperation:
+        valor = decimal_celula(bruto)
+    except ValueError:
         raise ValueError('Informe um valor válido em reais.')
+    if valor is None:
+        raise ValueError('Informe o valor em reais.')
     if not valor.is_finite() or not 0 <= valor <= 10 ** 9 or valor.as_tuple().exponent < -2:
         raise ValueError('Use valor de até 1 bilhão com duas casas decimais.')
     return int(valor * 100)
@@ -215,6 +221,76 @@ def folha():
     except (ValueError, TypeError) as erro:
         return resposta_edicao(str(erro), '/esocial', erro=True)
     return resposta_edicao('Lançamento de folha salvo.', f'/esocial?periodo={periodo}')
+
+
+def _planilha_folha(linhas):
+    """Valida a planilha (periodo, cpf ou nome, rubrica, valor) e resolve os vínculos."""
+    colunas = set().union(*(set(l) for l in linhas))
+    faltando = {'periodo', 'rubrica', 'valor'} - colunas
+    if faltando or not ({'cpf', 'empregado', 'nome'} & colunas):
+        raise ValueError('Use as colunas periodo, cpf (ou nome), rubrica e valor. Baixe o modelo em /modelo/folha-esocial.')
+    empregados = {}
+    for e in fetch('SELECT id,cpf,nome FROM esocial_empregados'):
+        empregados[e['cpf']] = e['id']
+        digitos = ''.join(c for c in e['cpf'] if c.isdigit())
+        empregados[digitos] = e['id']
+        empregados[e['nome'].casefold()] = e['id']
+    rubricas = {}
+    for r in fetch('SELECT id,codigo FROM esocial_rubricas'):
+        rubricas[r['codigo']] = r['id']
+        rubricas[r['codigo'].casefold()] = r['id']
+    lancamentos = {}
+    for i, ln in enumerate(linhas, start=2):
+        prefixo = f'Linha {i}: '
+        periodo = celula(ln.get('periodo'))
+        if not PERIODO_RE.fullmatch(periodo):
+            raise ValueError(prefixo + 'período deve ser AAAA-MM.')
+        bruto = celula(ln.get('cpf') or ln.get('empregado') or ln.get('nome'))
+        digitos = ''.join(c for c in bruto if c.isdigit())
+        empregado_id = empregados.get(digitos) if digitos else None
+        if not empregado_id and bruto:
+            empregado_id = empregados.get(bruto.casefold())
+        if not empregado_id:
+            raise ValueError(prefixo + 'empregado não encontrado pelo CPF ou nome: ' + bruto[:60])
+        codigo = celula(ln.get('rubrica') or ln.get('codigo'))
+        rubrica_id = rubricas.get(codigo) or rubricas.get(codigo.casefold())
+        if not rubrica_id:
+            raise ValueError(prefixo + 'rubrica não encontrada pelo código: ' + codigo[:30])
+        try:
+            centavos = _centavos_valor(ln.get('valor'))
+        except ValueError as erro:
+            raise ValueError(prefixo + str(erro)) from erro
+        lancamentos[(periodo, empregado_id, rubrica_id)] = centavos
+    return lancamentos, next(iter(lancamentos))[0]
+
+
+@esocial.post('/esocial/folha/importar')
+@login_required
+def importar_folha():
+    arquivo = request.files.get('arquivo')
+    if not arquivo or not arquivo.filename:
+        return resposta_edicao('Escolha o arquivo CSV ou XLSX com a folha.', '/esocial', erro=True)
+    bruto = arquivo.read()
+    if len(bruto) > 12 * 1024 * 1024:
+        return resposta_edicao('Arquivo maior que 12 MB.', '/esocial', erro=True)
+    try:
+        linhas = ler_tabela(bruto, arquivo.filename)
+        if not linhas or len(linhas) > 5000:
+            raise ValueError('Envie de 1 a 5.000 linhas.')
+        lancamentos, periodo_alvo = _planilha_folha(linhas)
+        with connection() as conn, conn.cursor() as cur:
+            cur.execute('SELECT pg_advisory_xact_lock(%s)', (LOCK,))
+            for (periodo, empregado_id, rubrica_id), centavos in sorted(lancamentos.items()):
+                cur.execute('''INSERT INTO esocial_folha(periodo,empregado_id,rubrica_id,valor_centavos)
+                               VALUES(%s,%s,%s,%s)
+                               ON CONFLICT(periodo,empregado_id,rubrica_id) DO UPDATE
+                               SET valor_centavos=excluded.valor_centavos''', (periodo, empregado_id, rubrica_id, centavos))
+            cur.execute('INSERT INTO auditoria(acao,antes,depois) VALUES(%s,%s,%s)',
+                        ('eSocial: importação de folha', Json({}), Json(dict(linhas=len(linhas), lancamentos=len(lancamentos), periodo=periodo_alvo))))
+    except (ValueError, TypeError) as erro:
+        return resposta_edicao(str(erro), '/esocial', erro=True)
+    return resposta_edicao(f'Importação concluída: {len(lancamentos)} lançamento(s). Lançamentos já existentes no período tiveram o valor atualizado.',
+                           f'/esocial?periodo={periodo_alvo}')
 
 
 @esocial.post('/esocial/folha/<int:identificador>/remover')

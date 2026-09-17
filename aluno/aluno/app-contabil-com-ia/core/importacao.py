@@ -2,12 +2,99 @@ import csv
 import io
 import re
 from collections import defaultdict
-from datetime import date
+from datetime import date, datetime
+from decimal import Decimal, InvalidOperation
 from psycopg2.extras import RealDictCursor, Json
 from core.db import connection
 
 CAMPOS=['linha_id','documento_id','empresa_id','data','conta_id','debito_centavos','credito_centavos','tipo','historico','origem_id','centro_id','atividade_caixa','rubrica_caixa']
 TIPOS={'abertura','receita','recebimento','pagamento','competencia','depreciacao','aporte','distribuicao','encerramento','reserva','investimento'}
+
+
+def celula(valor):
+    """Célula de CSV/XLSX como texto limpo; datas viram AAAA-MM-DD."""
+    if valor is None:
+        return ''
+    if isinstance(valor, datetime):
+        return valor.date().isoformat()
+    if isinstance(valor, date):
+        return valor.isoformat()
+    if isinstance(valor, bool):
+        return '1' if valor else '0'
+    if isinstance(valor, float):
+        return str(int(valor)) if valor.is_integer() else repr(valor)
+    return str(valor).strip()
+
+
+def decimal_celula(valor):
+    """Célula como Decimal ('1.000,50', '1000.50', número do Excel). None se vazia."""
+    if valor is None:
+        return None
+    if isinstance(valor, (int, float)) and not isinstance(valor, bool):
+        return Decimal(str(valor))
+    texto = str(valor).strip().replace(' ', '')
+    if not texto:
+        return None
+    if '.' in texto and ',' in texto:
+        texto = texto.replace('.', '').replace(',', '.')
+    elif ',' in texto:
+        texto = texto.replace(',', '.')
+    try:
+        return Decimal(texto)
+    except InvalidOperation:
+        raise ValueError('Valor numérico inválido: ' + str(valor)[:40])
+
+
+def _cabecalho(valor):
+    """Cabeçalho de coluna em minúsculas, sem espaços (vira _) nem acentos."""
+    texto = celula(valor).lower()
+    from unicodedata import normalize
+    return re.sub(r'\s+', '_', normalize('NFKD', texto).encode('ascii', 'ignore').decode())
+
+
+def ler_tabela(bruto: bytes, nome: str):
+    """Lê CSV (UTF-8/Latin-1, vírgula ou ponto e vírgula) ou a primeira aba de XLSX.
+
+    Devolve dicionários por linha com cabeçalho em minúsculas, sem espaços/acentos.
+    """
+    if nome.lower().endswith('.csv'):
+        for encoding in ('utf-8-sig', 'latin-1'):
+            try:
+                texto = bruto.decode(encoding)
+                break
+            except UnicodeDecodeError:
+                continue
+        else:
+            raise ValueError('Não consegui decodificar o CSV.')
+        amostra = texto[:2048]
+        separador = ';' if amostra.count(';') > amostra.count(',') else ','
+        leitor = csv.DictReader(io.StringIO(texto), delimiter=separador)
+        if not leitor.fieldnames or len(set(leitor.fieldnames)) != len(leitor.fieldnames):
+            raise ValueError('Cabeçalho inválido ou repetido.')
+        linhas = []
+        for linha in leitor:
+            if any((v or '').strip() for v in linha.values() if isinstance(v, str)):
+                linhas.append(dict((_cabecalho(k), v) for k, v in linha.items() if k is not None))
+        return linhas
+    if nome.lower().endswith(('.xlsx', '.xlsm')):
+        from openpyxl import load_workbook
+        try:
+            livro = load_workbook(io.BytesIO(bruto), read_only=True, data_only=True)
+        except Exception as erro:
+            raise ValueError('Não consegui ler a planilha: ' + str(erro)) from erro
+        try:
+            aba = livro[livro.sheetnames[0]]
+            brutas = list(aba.iter_rows(values_only=True))
+        finally:
+            livro.close()
+        if not brutas:
+            return []
+        cabecalho = [_cabecalho(c) for c in brutas[0]]
+        if not any(cabecalho) or len(set(cabecalho)) != len(cabecalho):
+            raise ValueError('Cabeçalho inválido ou repetido.')
+        return [dict(zip(cabecalho, linha)) for linha in brutas[1:]
+                if any(c is not None and str(c).strip() for c in linha)]
+    raise ValueError('Formato não suportado: use CSV ou XLSX.')
 
 def ler_csv(raw):
     try: text=raw.decode('utf-8-sig')

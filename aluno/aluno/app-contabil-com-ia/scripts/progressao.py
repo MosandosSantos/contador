@@ -16,10 +16,10 @@ ROOT = Path(__file__).resolve().parents[1]
 TEMPLATE = ROOT / 'assets/template.zip'
 MARCADOR = '.app-contabil-template.json'
 ESTADO = 'config/modulos.json'
-ORDEM = ('conciliacao', 'importacao-cadastros', 'balancete', 'razao', 'balanco', 'dre-referencia', 'dre-gerencial', 'dmpl', 'fluxos', 'orcamento', 'analise-ia', 'publicacao')
+ORDEM = ('conciliacao', 'importacao-cadastros', 'balancete', 'razao', 'balanco', 'dre-referencia', 'dre-gerencial', 'dmpl', 'fluxos', 'orcamento', 'analise-ia', 'fiscal', 'publicacao')
 DEPENDENCIAS = {m: ('conciliacao',) for m in ORDEM}
 DEPENDENCIAS.update(conciliacao=(), **{m: ('importacao-cadastros',) for m in ORDEM[2:9]})
-DEPENDENCIAS.update({'orcamento': ('dre-gerencial',), 'analise-ia': ('importacao-cadastros',), 'publicacao': ('conciliacao',)})
+DEPENDENCIAS.update({'orcamento': ('dre-gerencial',), 'analise-ia': ('importacao-cadastros',), 'fiscal': ('importacao-cadastros',), 'publicacao': ('conciliacao',)})
 BASE = ('.dockerignore', '.env.example', '.gitignore', 'README.md', 'requirements.txt', 'THIRD_PARTY_NOTICES.md', 'app.py', 'config/app.json', 'scripts/schema.sql', 'scripts/local.py', 'scripts/preparar.py', 'iniciar.bat', 'parar.bat', 'preparar_ambiente.bat', 'core/', 'modules/', 'dados/', 'static/', 'templates/base.html', 'templates/login.html', 'templates/error.html', 'templates/home.html')
 ARQUIVOS = {
     'conciliacao': ('templates/conciliacao_upload.html', 'templates/conciliacao_resultado.html', 'templates/conciliacao_detalhe.html'),
@@ -33,6 +33,10 @@ ARQUIVOS = {
     'fluxos': ('templates/fluxo_caixa.html', 'templates/sem_base.html'),
     'orcamento': ('templates/orcado_realizado.html', 'templates/sem_base.html'),
     'analise-ia': ('templates/analise_chat.html', 'templates/configuracao_ia.html', 'configurar_ia.bat', 'scripts/configurar_ia.py'),
+    'fiscal': ('core/ecf.py', 'core/ecd.py', 'core/efd_contribuicoes.py', 'core/efd_icms_ipi.py', 'core/esocial.py',
+               'modules/ecf.py', 'modules/efd.py', 'modules/esocial.py',
+               'templates/ecf.html', 'templates/efd_contribuicoes.html', 'templates/efd_icms_ipi.html', 'templates/esocial.html',
+               'scripts/validar_ecd.py', 'scripts/validar_ecf.py', 'scripts/validar_efd_contribuicoes.py', 'scripts/validar_efd_icms_ipi.py', 'scripts/validar_esocial.py'),
     'publicacao': ('Dockerfile', 'docs/EASYPANEL.md'),
 }
 PONTES = ('atualizar.bat', 'scripts/atualizar.py', 'scripts/atualizar_selecionar.py', 'publicar.bat', 'scripts/empacotar_publicacao.py', 'scripts/progressao.py', 'scripts/zipar_app.py', 'scripts/personalizar_nome.py')

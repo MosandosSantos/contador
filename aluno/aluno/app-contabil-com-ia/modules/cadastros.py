@@ -151,33 +151,8 @@ def regra_centro():
 
 def _linhas_referencial(bruto: bytes, nome: str):
     """Lê CSV ou a primeira aba de um XLSX e devolve dicionários das linhas."""
-    import csv as _csv
-    import io as _io
-    if nome.lower().endswith('.csv'):
-        for encoding in ('utf-8-sig', 'latin-1'):
-            try:
-                texto = bruto.decode(encoding)
-                break
-            except UnicodeDecodeError:
-                continue
-        else:
-            raise ValueError('Não consegui decodificar o CSV.')
-        amostra = texto[:2048]
-        separador = ';' if amostra.count(';') > amostra.count(',') else ','
-        leitor = _csv.DictReader(_io.StringIO(texto), delimiter=separador)
-        return [dict(linha) for linha in leitor if any((v or '').strip() for v in linha.values() if isinstance(v, str))]
-    if nome.lower().endswith(('.xlsx', '.xlsm')):
-        from openpyxl import load_workbook
-        livro = load_workbook(_io.BytesIO(bruto), read_only=True, data_only=True)
-        aba = livro[livro.sheetnames[0]]
-        linhas = list(aba.iter_rows(values_only=True))
-        livro.close()
-        if not linhas:
-            return []
-        cabecalho = [str(c).strip() if c is not None else '' for c in linhas[0]]
-        return [dict(zip(cabecalho, linha)) for linha in linhas[1:]
-                if any(c is not None and str(c).strip() for c in linha)]
-    raise ValueError('Formato não suportado: use CSV ou XLSX.')
+    from core.importacao import ler_tabela
+    return ler_tabela(bruto, nome)
 
 
 @cadastros.post('/contas/referencial')

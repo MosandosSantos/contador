@@ -51,6 +51,7 @@ def empresa():
                 cur.execute('SELECT pg_advisory_xact_lock(20260920)')
                 cur.execute('SELECT cnpj,razao_social FROM empresa WHERE id=1')
                 antes = cur.fetchone()
+                antes_dict = dict(zip(('cnpj', 'razao_social'), antes)) if antes else {}
                 cur.execute('''INSERT INTO empresa(id,cnpj,razao_social,nome_fantasia,regime,cep,logradouro,numero,complemento,bairro,municipio,uf,ie,cod_mun)
                                VALUES(1,%(cnpj)s,%(razao_social)s,%(nome_fantasia)s,%(regime)s,%(cep)s,%(logradouro)s,%(numero)s,%(complemento)s,%(bairro)s,%(municipio)s,%(uf)s,%(ie)s,%(cod_mun)s)
                                ON CONFLICT(id) DO UPDATE SET cnpj=excluded.cnpj,razao_social=excluded.razao_social,
@@ -59,7 +60,7 @@ def empresa():
                                municipio=excluded.municipio,uf=excluded.uf,ie=excluded.ie,cod_mun=excluded.cod_mun,
                                atualizado=clock_timestamp()''', dados)
                 cur.execute('INSERT INTO auditoria(acao,antes,depois) VALUES(%s,%s,%s)',
-                            ('Cadastro da empresa', Json(dict(antes) if antes else {}), Json(dados)))
+                            ('Cadastro da empresa', Json(antes_dict), Json(dados)))
         except (ValueError, TypeError) as e:
             return resposta_edicao(str(e), '/empresa', erro=True)
         return resposta_edicao('Dados da empresa salvos.', '/empresa')

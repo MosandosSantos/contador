@@ -50,6 +50,13 @@
 </section>
 
 <section class="table-card"><header class="section-head"><h2>Folha do período (S-1200)</h2><button type="button" class="btn btn-primary" data-create-modal="criar-folha"><i class="ph ph-plus" aria-hidden="true"></i> Lançamento</button></header>
+  <form method="post" action="/esocial/folha/importar" enctype="multipart/form-data" class="form-actions">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="file" name="arquivo" accept=".csv,.xlsx,.xlsm" required>
+    <button class="btn btn-primary" type="submit">Importar folha</button>
+    <a class="btn btn-secondary" href="/modelo/folha-esocial">Baixar modelo</a>
+  </form>
+  <p class="intro">Uma linha por lançamento com periodo, cpf (ou nome), rubrica e valor. Empregado e rubrica precisam existir no cadastro; lançamentos já existentes no período têm o valor atualizado.</p>
   {% if folha %}<div class="table-scroll"><table><thead><tr><th>Empregado</th><th>Rubrica</th><th>Tipo</th><th>Valor</th><th>Ações</th></tr></thead><tbody>
   {% for f in folha %}<tr><td>{{ f.empregado_nome }}</td><td>{{ f.rubrica_codigo }} · {{ f.rubrica_descricao }}</td><td>{{ f.rubrica_tipo }}</td><td class="num">{{ f.valor_centavos|money_num }}</td><td><form method="post" action="/esocial/folha/{{ f.id }}/remover" class="inline"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-secondary" type="submit">Remover</button></form></td></tr>{% endfor %}
   </tbody></table></div>{% else %}<div class="vz"><p>Sem lançamentos neste período.</p></div>{% endif %}

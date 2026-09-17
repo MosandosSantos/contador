@@ -11,6 +11,16 @@
 <p class="intro">Documentos fiscais do mês que alimentam a EFD-Contribuições. Notas de saída/entrada geram C100/C170; serviços geram A100/A170. Os itens carregam CST, CFOP e os valores de PIS e COFINS.</p>
 {% if not participantes %}<div class="notice notice-error">Cadastre participantes (Cadastros → Participantes) antes de lançar documentos fiscais.</div>{% endif %}
 
+<section class="card form-card"><header class="section-head"><h2>Importar notas (CSV ou XLSX)</h2></header>
+  <form method="post" action="/nf/importar" enctype="multipart/form-data" class="form-actions">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <input type="file" name="arquivo" accept=".csv,.xlsx,.xlsm" required>
+    <button class="btn btn-primary" type="submit">Importar</button>
+    <a class="btn btn-secondary" href="/modelo/nf">Baixar modelo</a>
+  </form>
+  <p class="intro">Uma linha por item; linhas com o mesmo período, tipo, participante, número e série formam um documento. O participante precisa existir no cadastro (documento ou nome). Reenviar um documento substitui os itens dele pelos do arquivo.</p>
+</section>
+
 <section class="table-card"><header class="section-head"><h2>{{ documentos|length }} documento(s) no período</h2></header>
   {% if documentos %}<div class="table-scroll"><table><thead><tr><th>Tipo</th><th>Participante</th><th>Número</th><th>Série</th><th>Data</th><th>Total informado</th><th>Σ itens</th><th>Ações</th></tr></thead><tbody>
   {% for d in documentos %}<tr {% if doc and doc.id == d.id %}class="is-active-row"{% endif %}><td>{{ tipos[d.tipo] }}</td><td>{{ d.participante }}</td><td>{{ d.numero or '—' }}</td><td>{{ d.serie or '—' }}</td><td>{{ d.data_emissao|data_br }}</td><td class="num">{{ d.valor_total_centavos|money_num }}</td><td class="num">{{ d.total_itens|money_num }} ({{ d.n_itens }})</td><td><a class="btn btn-secondary" href="/nf?periodo={{ periodo }}&doc={{ d.id }}">Itens</a> <button type="button" class="btn btn-secondary" data-edit-modal="criar-doc" data-record='{{ {"id": d.id, "periodo": d.periodo, "tipo": d.tipo, "participante": d.participante, "numero": d.numero, "serie": d.serie, "data_emissao": d.data_emissao, "valor_total": "%.2f"|format(d.valor_total_centavos / 100) }|tojson }}'>Editar</button> <form method="post" action="/nf/doc/{{ d.id }}/remover" class="inline"><input type="hidden" name="csrf_token" value="{{ csrf_token }}"><button class="btn btn-secondary" type="submit">Remover</button></form></td></tr>{% endfor %}
